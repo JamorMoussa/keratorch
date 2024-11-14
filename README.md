@@ -55,10 +55,15 @@ loader = DataLoader(dataset, batch_size=25)
 
 ```python
 res = model.fit(trloader= loader, num_iters=10)
+```
 
+```
+100%|█████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:00<00:00, 19.10it/s]
 ```
 
 ```python
 plt.plot(res["train_loss"])
 plt.show()
 ```
+
+![](https://raw.githubusercontent.com/JamorMoussa/images/refs/heads/main/src/keratorch/loss_plot.png)
