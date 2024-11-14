@@ -36,6 +36,8 @@ class TrModule(nn.Module, ABC):
         self.optimzer = optimizer
         self.device = device if device is not None else tr.device("cpu")
 
+        self.to(self.device)
+
 
     def fit(
         self, trloader: DataLoader, num_iters: int
@@ -46,11 +48,14 @@ class TrModule(nn.Module, ABC):
 
             for inputs, targets in trloader:
 
+                inputs = inputs.to(self.device)
+                targets = targets.to(self.device)
+
                 self.optimzer.zero_grad()
 
-                outs_pred = self.forward(inputs.to(self.device))
+                outs_pred = self.forward(inputs)
 
-                loss: tr.Tensor = self.loss_fn(input=outs_pred, target=targets.to(self.device))
+                loss: tr.Tensor = self.loss_fn(input=outs_pred, target=targets)
                 loss.backward()
 
                 results["train_loss"].append(loss.item())
