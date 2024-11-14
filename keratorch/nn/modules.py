@@ -10,13 +10,15 @@ if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
     from torch.optim.optimizer import Optimizer 
 
+__all__ = ["TrModule", ]
+
 class TrModule(nn.Module, ABC):
 
     def __init__(self):
         super(TrModule, self).__init__()
 
-        self.loss_fn: _Loss = None 
-        self.optimzer: Optimizer = None 
+        self.loss_fn: "_Loss" = None 
+        self.optimzer: "Optimizer" = None 
         self.device: tr.device = None
 
     @abstractmethod
@@ -25,8 +27,8 @@ class TrModule(nn.Module, ABC):
 
     def compile(
         self, 
-        loss_fn: _Loss,
-        optimizer: Optimizer,
+        loss_fn: "_Loss",
+        optimizer: "Optimizer",
         *,
         device: tr.device = None,
     ):
@@ -36,13 +38,13 @@ class TrModule(nn.Module, ABC):
 
 
     def fit(
-        self, train_loader: DataLoader, num_iters: int
+        self, trloader: DataLoader, num_iters: int
     ):
         results = {"train_loss": []} 
 
         for epoch in tqdm(range(num_iters)):
 
-            for inputs, targets in train_loader:
+            for inputs, targets in trloader:
 
                 self.optimzer.zero_grad()
 
