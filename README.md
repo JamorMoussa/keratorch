@@ -25,14 +25,21 @@ class MLPModel(kt.nn.TrModule):
     def forward(self, x: tr.Tensor):
         return self.fc(x)
 
+model = MLPModel()
 
 ```
 
+You can define the model using the `TrSequential` container.
+
 ```python
+model = kt.nn.TrSequential(
+    nn.Linear(3, 1)
+)
+```
 
-model = MLPModel()
+compile the model: 
 
-
+```python
 model.compile(
     loss_fn= nn.MSELoss(),
     optimizer= tr.optim.Adam(model.parameters(), lr=0.01), 
