@@ -34,11 +34,11 @@ import matplotlib.pyplot as plt
 
 ### Model Definition
 
-Use `TrSequential`, a Keras-inspired container, to build the model. The `TrLambda` layer allows custom transformations to be integrated easily.
+Use `Sequential`, a Keras-inspired container, to build the model. The `Lambda` layer allows custom transformations to be integrated easily.
 
 ```python
-model = kt.nn.TrSequential(
-    kt.nn.TrLambda(lambda x: x.unsqueeze(1)),  # Custom transformation
+model = kt.nn.Sequential(
+    kt.nn.Lambda(lambda x: x.unsqueeze(1)),  # Custom transformation
     nn.Conv1d(1, 10, kernel_size=2),
     nn.Flatten(start_dim=1),
     nn.Linear(10 * 6, 1)

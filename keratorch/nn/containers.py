@@ -1,17 +1,17 @@
 from .  import TrModule
 
-from torch.nn import Sequential, Module
+import torch.nn as nn
 from torch.nn.modules.loss import _Loss
 
 
-__all__ = ["TrSequential", ]
+__all__ = ["Sequential", ]
 
-class TrSequential(Sequential, TrModule):
+class Sequential(nn.Sequential, TrModule):
 
     def __init__(
-        self, *args: Module
+        self, *args: nn.Module
     ):
-        super(TrSequential, self).__init__(*args)
+        super(Sequential, self).__init__(*args)
 
     def forward(self, input):
         for module in self:

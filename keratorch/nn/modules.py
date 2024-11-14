@@ -4,13 +4,13 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
     from torch.optim.optimizer import Optimizer 
 
-__all__ = ["TrModule", ]
+__all__ = ["TrModule", "Lambda"]
 
 class TrModule(nn.Module, ABC):
 
@@ -72,3 +72,15 @@ class TrModule(nn.Module, ABC):
 
     def summary(self):
         raise NotImplementedError
+
+
+class Lambda(nn.Module):
+
+    def __init__(
+        self, transform_func: Callable
+    ):
+        super(Lambda, self).__init__()
+        self.transform_func = transform_func
+
+    def forward(self, inputs: tr.Tensor):
+        return self.transform_func(inputs)
