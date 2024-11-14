@@ -25,6 +25,7 @@ Here’s a quick example to get started with **Keratorch**.
 
 ```python
 import keratorch as kt
+
 import torch as tr
 import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
@@ -60,8 +61,9 @@ model.compile(
 Create synthetic data for training.
 
 ```python
-x = tr.rand(1000, 3)
-y = tr.mm(x, tr.Tensor([[-1, 1, -1]]).t())
+x = tr.rand(1000, 7)
+y = tr.mm(x, tr.rand(1, 7).t())
+
 dataset = TensorDataset(x, y)
 loader = DataLoader(dataset, batch_size=25)
 ```
