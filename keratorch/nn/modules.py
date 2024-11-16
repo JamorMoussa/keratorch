@@ -6,9 +6,10 @@ from tqdm import tqdm
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable
 
+from ..optim import Optimizer
+
 if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
-    from torch.optim.optimizer import Optimizer 
 
 __all__ = ["TrModule", "Lambda"]
 
@@ -28,12 +29,13 @@ class TrModule(nn.Module, ABC):
     def compile(
         self, 
         loss_fn: "_Loss",
-        optimizer: "Optimizer",
+        optimizer: Optimizer,
         *,
         device: tr.device = None,
     ):
         self.loss_fn = loss_fn
         self.optimzer = optimizer
+        self.optimzer.set_params(params=self.parameters())
         self.device = device if device is not None else tr.device("cpu")
 
         self.to(self.device)
