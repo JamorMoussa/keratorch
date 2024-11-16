@@ -2,7 +2,7 @@ from torch import optim
 
 from abc import ABC, abstractmethod
 
-__all__ = ["Adam", "SGD", "O"]
+__all__ = ["Adam", "SGD", "Optimizer"]
 
 
 class Optimizer(ABC):
