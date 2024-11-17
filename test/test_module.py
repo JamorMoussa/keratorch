@@ -6,23 +6,28 @@ import keratorch as kt
 import matplotlib.pyplot as plt
 
 
-class PrintMessage(kt.callback.CallBack):
+class Model(kt.nn.ktModule):
 
-    def on_batch_end(self, batch=None, logs = None):
-        print(logs)
+    def __init__(self):
+        super(Model, self).__init__()
+
+        self.fc = kt.nn.Sequential(
+            kt.nn.Lambda(lambda x: x.unsqueeze(1)),
+            nn.Conv1d(1, 10, kernel_size=2),
+            nn.Flatten(start_dim=1),
+            nn.Linear(10 * 6 , 1)
+        )
+
+    def forward(self, x):
+        return self.fc(x)
 
 
-model = kt.nn.Sequential(
-    kt.nn.Lambda(lambda x: x.unsqueeze(1)),
-    nn.Conv1d(1, 10, kernel_size=2),
-    nn.Flatten(start_dim=1),
-    nn.Linear(10 * 6 , 1)
-)
+model = Model()
 
 model.compile(
     loss_fn= nn.MSELoss(),
     optimizer= kt.optim.Adam(lr=0.01),
-    callbacks= [PrintMessage(), ]
+    callbacks= []
 )
 
 x = tr.rand(1000, 7)
