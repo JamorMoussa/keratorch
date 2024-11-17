@@ -8,25 +8,36 @@ from typing import TYPE_CHECKING, Callable
 from collections import defaultdict
 
 from ..optim import Optimizer
-from ..callback import CallBackList, CallBack, History
+from ..callback import CallBackList, CallBack , State, History
 
 if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
 
-__all__ = ["TrModule", "Lambda"]
+__all__ = ["ktModule", "Lambda"]
 
-class TrModule(nn.Module, ABC):
+class ktModule(nn.Module, ABC):
 
     def __init__(self):
-        super(TrModule, self).__init__()
+        super(ktModule, self).__init__()
 
         self.loss_fn: "_Loss" = None 
         self.optimzer: "Optimizer" = None 
         self.device: tr.device = None
 
-        self.callbacklist: CallBackList = CallBackList()
         self.history: History = History()
+
+        self.state = State()
+        self.init_state()
+
+        self.callbacklist: CallBackList = CallBackList(state=self.state)
+
         self.callbacklist.append(self.history)
+
+    def init_state(self):
+        self.state.set_model(model=self)
+        self.state.set_optimizer(optimizer=self.optimzer)
+        self.state.set_history(history=self.history)
+        # self.state.set_loss_fn()
 
     @abstractmethod
     def forward(self, *args, **kwargs):
@@ -61,28 +72,30 @@ class TrModule(nn.Module, ABC):
             
             epoch_loss = 0.0
             
-            self.callbacklist.on_epoch_begin(epoch=epoch)
-            for inputs, targets in tqdm(trloader):
+            self.callbacklist.on_epoch_begin()
+            for itr, batch in enumerate(tqdm(trloader)):
+                self.state.hyprams.set_epoch(epoch=epoch)
+                self.state.hyprams.set_iter(iter=itr)
 
-                self.callbacklist.on_batch_begin(batch=[inputs, targets])
+                self.state.set_batch(batch=batch)
+                self.callbacklist.on_batch_begin()
 
-                inputs = inputs.to(self.device)
-                targets = targets.to(self.device)
-
-                self.optimzer.zero_grad()
+                inputs = batch[0].to(self.device)
+                targets = batch[1].to(self.device)
 
                 outs_pred = self.forward(inputs)
-
                 loss: tr.Tensor = self.loss_fn(input=outs_pred, target=targets)
-                loss.backward()
 
                 logs["train_loss"] = loss.item()
                 
+                self.optimzer.zero_grad()
+                loss.backward()
                 self.optimzer.step()
 
-                self.callbacklist.on_batch_end(batch=(inputs, targets), logs=logs)
+                self.state.set_logs(logs=logs)
+                self.callbacklist.on_batch_end()
 
-            self.callbacklist.on_epoch_end(epoch=epoch, logs=logs)
+            self.callbacklist.on_epoch_end()
 
         return self.history
 

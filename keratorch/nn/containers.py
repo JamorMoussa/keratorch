@@ -1,4 +1,4 @@
-from .  import TrModule
+from .  import ktModule
 
 import torch.nn as nn
 from torch.nn.modules.loss import _Loss
@@ -6,7 +6,7 @@ from torch.nn.modules.loss import _Loss
 
 __all__ = ["Sequential", ]
 
-class Sequential(nn.Sequential, TrModule):
+class Sequential(nn.Sequential, ktModule):
 
     def __init__(
         self, *args: nn.Module
