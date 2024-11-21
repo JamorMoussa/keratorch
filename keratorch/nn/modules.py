@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Callable
 from collections import defaultdict
 
 from ..optim import Optimizer
-from ..callback import CallBackList, CallBack , State, History
+from ..callbacks import CallBackList, CallBack , State, History
 
 if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
@@ -37,7 +37,6 @@ class ktModule(nn.Module, ABC):
         self.state.set_model(model=self)
         self.state.set_optimizer(optimizer=self.optimzer)
         self.state.set_history(history=self.history)
-        # self.state.set_loss_fn()
 
     @abstractmethod
     def forward(self, *args, **kwargs):
@@ -63,17 +62,21 @@ class ktModule(nn.Module, ABC):
 
 
     def fit(
-        self, trloader: DataLoader, num_iters: int
+        self, trainloader: DataLoader, num_iters: int, verbose_iter: int = None
     ):
         logs = {}
 
+        self.state.hyprams.set_numiters(num_iters=num_iters)
+        self.state.hyprams.set_loadersize(loadersize=len(trainloader))
+        self.state.hyprams.set_verbose_iter(verbose_iter=verbose_iter)
         self.callbacklist.on_train_begin()
+
         for epoch in range(num_iters):
             
             epoch_loss = 0.0
             
             self.callbacklist.on_epoch_begin()
-            for itr, batch in enumerate(tqdm(trloader)):
+            for itr, batch in enumerate(tqdm(trainloader)):
                 self.state.hyprams.set_epoch(epoch=epoch)
                 self.state.hyprams.set_iter(iter=itr)
 
@@ -86,7 +89,7 @@ class ktModule(nn.Module, ABC):
                 outs_pred = self.forward(inputs)
                 loss: tr.Tensor = self.loss_fn(input=outs_pred, target=targets)
 
-                logs["train_loss"] = loss.item()
+                self.state.set_loss(loss=loss.item())
                 
                 self.optimzer.zero_grad()
                 loss.backward()

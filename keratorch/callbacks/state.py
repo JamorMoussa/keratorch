@@ -8,9 +8,12 @@ if TYPE_CHECKING:
 
 __all__ = ["State", ]
 
-class HyParamState:
+class HyparamState:
     iter: int = 0 
     epoch: int = 0
+    verbose_iter: int = 0
+    loadersize: int = 0
+    num_iters: int = 0
 
     def set_epoch(self, epoch: int):
         self.epoch = epoch 
@@ -18,17 +21,29 @@ class HyParamState:
     def set_iter(self, iter: int):
         self.iter = iter 
 
+    def set_verbose_iter(self, verbose_iter: int):
+        if verbose_iter is None:
+            verbose_iter = 2 * self.num_iters
+        self.verbose_iter = verbose_iter 
+
+    def set_loadersize(self, loadersize: int):
+        self.loadersize = loadersize
+
+    def set_numiters(self, num_iters: int):
+        self.num_iters = num_iters
+
 
 class State:
 
     model: tr.nn.Module = None 
     optimizer: "tr.optim.optimizer.Optimizer" = None 
-    loss_fn: tr.nn.modules.loss._Loss = None
+    loss: float
     batch: tuple[tr.Tensor] = None 
     history: "History" = None 
-    logs: dict[Any] = {} 
+    logs: dict[Any] = {}
+    record_flag: bool = False
 
-    hyprams: HyParamState = HyParamState()
+    hyprams: HyparamState = HyparamState()
 
     def set_model(self, model: tr.nn.Module):
         self.model = model
@@ -36,8 +51,8 @@ class State:
     def set_optimizer(self, optimizer: "tr.optim.optimizer.Optimizer"):
         self.optimizer = optimizer
 
-    def set_loss_fn(self, loss_fn: tr.nn.modules.loss._Loss):
-        self.loss_fn = loss_fn
+    def set_loss(self, loss: float):
+        self.loss = loss
 
     def set_batch(self, batch: tuple[tr.Tensor]):
         self.batch = batch
