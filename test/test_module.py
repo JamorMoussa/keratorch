@@ -26,21 +26,28 @@ model = Model()
 
 model.compile(
     loss_fn= nn.MSELoss(),
-    optimizer= kt.optim.Adam(lr=0.01),
-    callbacks= []
+    optimizer= kt.optim.Adam(lr=0.1),
+    callbacks= [kt.callbacks.LossCallBack()]
 )
 
 x = tr.rand(1000, 7)
 
 y = tr.mm(
     x, tr.rand(1, 7).t()
-) + 0.3 * tr.randn(1000, 7)
+) + 0.9 * tr.randn(1000, 7)
 
 dataset = TensorDataset(x, y)
 
 loader = DataLoader(dataset, batch_size=25)
 
-hist = model.fit(trloader= loader, num_iters=10)
+hist = model.fit(trainloader= loader, num_iters=10, verbose_iter=40)
+
+print(hist.history.keys())
 
 plt.plot(hist.history["train_loss"])
+plt.plot(hist.history["train_acc"])
 plt.show()
+
+
+
+# iter == 0.1 * (len(loader)/batch_size )

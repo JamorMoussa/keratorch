@@ -11,6 +11,7 @@
 ## Installation
 
 To install Keratorch, clone the repository and install dependencies:
+
 ```bash
 git clone https://github.com/JamorMoussa/keratorch.git
 cd keratorch
