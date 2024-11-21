@@ -1,1 +1,1 @@
-from . import nn, optim, callbacks
+from . import nn, optim, callbacks, metrics

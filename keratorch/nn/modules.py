@@ -90,8 +90,11 @@ class ktModule(nn.Module, ABC):
                 inputs = batch[0].to(self.device)
                 targets = batch[1].to(self.device)
 
-                outs_pred = self.forward(inputs)
-                loss: tr.Tensor = self.loss_fn(input=outs_pred, target=targets)
+                outputs = self.forward(inputs)
+
+                self.state.set_outputs(outputs=outputs)
+                
+                loss: tr.Tensor = self.loss_fn(input=outputs, target=targets)
 
                 self.state.set_loss(loss=loss.item())
                 

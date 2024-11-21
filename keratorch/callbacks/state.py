@@ -40,6 +40,7 @@ class State:
     optimizer: "tr.optim.optimizer.Optimizer" = None 
     loss: float
     batch: tuple[tr.Tensor] = None 
+    outputs: tr.Tensor = None
     history: "History" = None 
     tqdm_iter: "TqdmIterator" = None 
     logs: dict[Any] = {}
@@ -58,6 +59,9 @@ class State:
 
     def set_batch(self, batch: tuple[tr.Tensor]):
         self.batch = batch
+
+    def set_outputs(self, outputs: tr.Tensor):
+        self.outputs = outputs
 
     def set_history(self, history: "History"):
         self.history = history
