@@ -4,15 +4,15 @@ from collections import defaultdict
 from .callback import CallBack
 from .state import State
 
-__all__ = ["LossCallBack", ]
+__all__ = ["LossCallback", ]
 
-class LossCallBack(CallBack):
+class LossCallback(CallBack):
 
     loss: float 
     counter: int = 1  
 
     def __init__(self):
-        super(LossCallBack, self).__init__()
+        super(LossCallback, self).__init__()
 
         self.reset()
 
@@ -30,6 +30,7 @@ class LossCallBack(CallBack):
     def on_batch_end(self, state: State = None):
 
         if state.record_flag:
+            state.tqdm_iter.metrics["Loss"] = f"{self.get_loss():.5f}"
             state.history.history["train_loss"].append(self.get_loss())
             self.reset()
         else:

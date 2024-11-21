@@ -9,6 +9,7 @@ from collections import defaultdict
 
 from ..optim import Optimizer
 from ..callbacks import CallBackList, CallBack , State, History
+from ..utils.iters import TqdmIterator
 
 if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
@@ -25,6 +26,7 @@ class ktModule(nn.Module, ABC):
         self.device: tr.device = None
 
         self.history: History = History()
+        self.tqdm_iter = TqdmIterator()
 
         self.state = State()
         self.init_state()
@@ -37,6 +39,7 @@ class ktModule(nn.Module, ABC):
         self.state.set_model(model=self)
         self.state.set_optimizer(optimizer=self.optimzer)
         self.state.set_history(history=self.history)
+        self.state.set_tqdm_iter(tqdm_iter=self.tqdm_iter)
 
     @abstractmethod
     def forward(self, *args, **kwargs):
@@ -76,7 +79,8 @@ class ktModule(nn.Module, ABC):
             epoch_loss = 0.0
             
             self.callbacklist.on_epoch_begin()
-            for itr, batch in enumerate(tqdm(trainloader)):
+
+            for itr, batch in self.tqdm_iter.get_tqdm(loader=trainloader, enum=True):
                 self.state.hyprams.set_epoch(epoch=epoch)
                 self.state.hyprams.set_iter(iter=itr)
 
