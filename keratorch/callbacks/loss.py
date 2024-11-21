@@ -30,9 +30,9 @@ class LossCallback(CallBack):
     def on_batch_end(self, state: State = None):
 
         if state.record_flag:
-            state.tqdm_iter.metrics["Loss"] = f"{self.get_loss():.5f}"
+            state.tqdm_iter.metrics["loss"] = f"{self.get_loss():.5f}"
             state.tqdm_iter.update()
-            
+
             state.history.history["train_loss"].append(self.get_loss())
             self.reset()
         else:
