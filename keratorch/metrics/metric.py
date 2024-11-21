@@ -17,7 +17,7 @@ class Metric(CallBack, ABC):
 
     def save_record(self, state: State):
 
-        state.tqdm_iter.metrics[self.name] = self.metric_value
+        state.tqdm_iter.metrics[self.name] = f"{self.metric_value:.4f}"
         state.tqdm_iter.update()
         state.history.history[self.name].append(
             self.metric_value
