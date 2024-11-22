@@ -96,13 +96,13 @@ class ktTrainer(nn.Module, ABC):
     ):
         self.state.hyprams.set_epoch(epoch=epoch)
         self.state.hyprams.set_iter(iter=itr)
-        self.state.set_batch(batch=batch)
 
 
     def compute_forward(
         self, batch: tuple[tr.Tensor]
     ):
-
+        self.state.set_batch(batch=batch)
+        
         inputs = batch[0].to(self.device)
         targets = batch[1].to(self.device)
 
