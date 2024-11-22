@@ -38,12 +38,26 @@ import matplotlib.pyplot as plt
 Use `Sequential`, a Keras-inspired container, to build the model. The `Lambda` layer allows custom transformations to be integrated easily.
 
 ```python
-model = kt.nn.Sequential(
-    kt.nn.Lambda(lambda x: x.unsqueeze(1)),  # Custom transformation
-    nn.Conv1d(1, 10, kernel_size=2),
-    nn.Flatten(start_dim=1),
-    nn.Linear(10 * 6, 1)
-)
+class Model(kt.nn.ktModule):
+
+    def __init__(self):
+        super(Model, self).__init__()
+
+        self.fc = nn.Sequential(
+            kt.nn.Lambda(lambda x: x.unsqueeze(1)),
+            nn.Conv1d(1, 10, kernel_size=2),
+            nn.Flatten(start_dim=1),
+            nn.Linear(10 * 6 , 1)
+        )
+
+    def forward(self, x):
+        return self.fc(x)
+```
+
+Create an instance of the `Model`: 
+
+```python
+model = Model()
 ```
 
 ### Model Compilation
@@ -52,8 +66,13 @@ Compile the model with a loss function and an optimizer.
 
 ```python
 model.compile(
-    loss_fn=nn.MSELoss(),
-    optimizer=tr.optim.Adam(model.parameters(), lr=0.01),
+    loss_fn= nn.MSELoss(),
+    optimizer= kt.optim.Adam(lr=0.001),
+    metrics= [
+        kt.metrics.Loss(name="train loss"),
+        # kt.metrics.Accuracy()
+    ],
+    callbacks= [ LogEpoch(), ]
 )
 ```
 
@@ -74,12 +93,12 @@ loader = DataLoader(dataset, batch_size=25)
 Train the model using the `fit` method.
 
 ```python
-res = model.fit(trloader=loader, num_iters=10)
+hist = model.fit(trainloader= loader, num_iters=5, num_records=40)
 ```
 
 Training output:
 ```
-100%|█████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:00<00:00, 19.10it/s]
+Epoch: [0/5] | train loss: 0.3189:  91%|█████████████████████████████████████████▋    | 284/313 [00:01<00:00, 277.55it/s]
 ```
 
 ### Visualizing Training Loss
@@ -87,7 +106,9 @@ Training output:
 Plot the training loss to observe the model's learning progress.
 
 ```python
-plt.plot(res["train_loss"])
+print(hist.history.keys())
+
+plt.plot(hist.history["train loss"])
 plt.show()
 ```
 
