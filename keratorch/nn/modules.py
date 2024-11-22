@@ -1,14 +1,13 @@
-import torch as tr, torch.nn as nn
-from torch.utils.data import DataLoader
-
-
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from ..train import ktTrainer
 
-
+if TYPE_CHECKING:
+    from torch.utils.data import DataLoader
 
 __all__ = ["ktModule", ]
+
 
 class ktModule(ktTrainer, ABC):
 
@@ -20,7 +19,7 @@ class ktModule(ktTrainer, ABC):
         ...
 
     def fit(
-        self, trainloader: DataLoader, num_iters: int, num_records: int = None
+        self, trainloader: "DataLoader", num_iters: int, num_records: int = None
     ):
         
         self.update_state_params_before_training(
