@@ -12,7 +12,7 @@ from ..utils.iters import TqdmIterator
 if TYPE_CHECKING:
     from torch.nn.modules.loss import _Loss
 
-__all__ = ["ktModule", "Lambda"]
+__all__ = ["ktModule", ]
 
 class ktModule(nn.Module, ABC):
 
