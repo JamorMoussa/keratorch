@@ -15,7 +15,6 @@ class Accuracy(Metric):
             self.metric_value /= state.hyparams.loadersize
 
         self.metric_value += (
-            state.outputs.argmax(dim=-1) == state.batch[1]
+            state.outputs.cpu().argmax(dim=-1) == state.batch[1]
         ).sum().item()
-
-        self.metric_value /= self.counter 
+ 

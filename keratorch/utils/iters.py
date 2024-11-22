@@ -7,14 +7,14 @@ if TYPE_CHECKING:
 
 class TqdmIterator:
 
-    loader: "DataLoader"
-    tqdm_iter: tqdm
-    desc: str = None
-
-    metrics: dict[str, str] = {}
-
     def __init__(self):
-        pass
+
+        self.loader: "DataLoader"
+        self.tqdm_iter: tqdm
+        self.desc: str = None
+
+        self.metrics: dict[str, str] = {}
+
 
     def get_tqdm(self, loader: "DataLoader", enum=False):
         self.loader = loader
