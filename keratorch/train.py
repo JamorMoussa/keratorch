@@ -1,6 +1,7 @@
-from .optim import Optimizer
 from .callbacks import CallBackList, CallBack , State, History
 from .utils.iters import TqdmIterator
+from .optim import Optimizer
+from .metrics import Metric
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -52,7 +53,8 @@ class ktTrainer(nn.Module, ABC):
         optimizer: Optimizer,
         *,
         device: tr.device = None,
-        callbacks: list[CallBack] = []
+        metrics: list[Metric] = [],
+        callbacks: list[CallBack] = [],
     ):
 
         self.compile_optimizer_lossfn(
@@ -61,6 +63,7 @@ class ktTrainer(nn.Module, ABC):
 
         self.send_model_to(device=device)
 
+        self.callbacklist.append(*metrics)
         self.callbacklist.append(*callbacks)
 
 
