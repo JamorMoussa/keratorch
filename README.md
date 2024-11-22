@@ -46,6 +46,7 @@ class Model(kt.nn.ktModule):
         self.fc = nn.Sequential(
             kt.nn.Lambda(lambda x: x.unsqueeze(1)),
             nn.Conv1d(1, 10, kernel_size=2),
+            nn.ReLU(),
             nn.Flatten(start_dim=1),
             nn.Linear(10 * 6 , 1)
         )
@@ -60,6 +61,25 @@ Create an instance of the `Model`:
 model = Model()
 ```
 
+#### Make a Custom Metric:
+
+You can make a custom metric:
+
+```python
+class PersonMetric(kt.metrics.Metric):
+
+    def compute_value(self, state):
+        
+        outs = state.outputs.flatten()
+        targets = state.batch[1].flatten()
+
+        outs_ = outs - outs.mean()
+        targets_ = targets - targets.mean()
+        self.metric_value += (outs_ * targets_).sum().item() / ((outs_**2).sum().sqrt() * (targets_**2).sum().sqrt()).item()
+
+        return self.metric_value
+```
+
 ### Model Compilation
 
 Compile the model with a loss function and an optimizer.
@@ -69,10 +89,11 @@ model.compile(
     loss_fn= nn.MSELoss(),
     optimizer= kt.optim.Adam(lr=0.001),
     metrics= [
-        kt.metrics.Loss(name="train loss"),
+        kt.metrics.Loss(name="loss"),
+        PersonMetric(name="person")
         # kt.metrics.Accuracy()
     ],
-    callbacks= [ LogEpoch(), ]
+    callbacks= []
 )
 ```
 
@@ -98,7 +119,17 @@ hist = model.fit(trainloader= loader, num_iters=5, num_records=40)
 
 Training output:
 ```
-Epoch: [0/5] | train loss: 0.3189:  91%|█████████████████████████████████████████▋    | 284/313 [00:01<00:00, 277.55it/s]
+Epoch: [0/10] | loss: 0.1505 | person: 0.6649: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 286.71it/s]
+Epoch: [1/10] | loss: 0.0804 | person: 0.8177: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 290.66it/s]
+Epoch: [2/10] | loss: 0.0702 | person: 0.8433: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 300.28it/s]
+Epoch: [3/10] | loss: 0.0685 | person: 0.8481: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 309.34it/s]
+Epoch: [4/10] | loss: 0.0683 | person: 0.8489: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 288.74it/s]
+Epoch: [5/10] | loss: 0.0683 | person: 0.8491: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 287.12it/s]
+Epoch: [6/10] | loss: 0.0684 | person: 0.8491: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 276.69it/s]
+Epoch: [7/10] | loss: 0.0684 | person: 0.8492: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 247.33it/s]
+Epoch: [8/10] | loss: 0.0684 | person: 0.8492: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 293.97it/s]
+Epoch: [9/10] | loss: 0.0685 | person: 0.8493: 100%|██████████████████████████████████| 400/400 [00:01<00:00, 291.07it/s]
+dict_keys(['loss', 'person'])
 ```
 
 ### Visualizing Training Loss
@@ -106,9 +137,9 @@ Epoch: [0/5] | train loss: 0.3189:  91%|█████████████�
 Plot the training loss to observe the model's learning progress.
 
 ```python
-print(hist.history.keys())
-
-plt.plot(hist.history["train loss"])
+plt.plot(hist.history["loss"])
+plt.show()
+plt.plot(hist.history["person"])
 plt.show()
 ```
 
