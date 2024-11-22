@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from ..train import ktTrainer
+from .train import ktTrainer
 
 if TYPE_CHECKING:
     from torch.utils.data import DataLoader
