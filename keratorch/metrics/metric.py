@@ -15,15 +15,11 @@ class Metric(CallBack, ABC):
     def compute_value(self, state) -> float:
         ...
 
-    def save_record(self, state: State):
+    def save_record(self, state: State, metric_value: float):
 
-        self.metric_value /= state.hyprams.loadersize
-
-        state.tqdm_iter.metrics[self.name] = f"{self.metric_value:.4f}"
+        state.tqdm_iter.metrics[self.name] = f"{metric_value:.4f}"
         state.tqdm_iter.update()
-        state.history.history[self.name].append(
-            self.metric_value
-        )
+        state.history.history[self.name].append(metric_value)
 
     def reset(self):
         self.metric_value = 0
@@ -31,9 +27,10 @@ class Metric(CallBack, ABC):
 
     def on_batch_end(self, state: State):
 
-        self.compute_value(state=state)
+        metric_value = self.compute_value(state=state)
+        self.counter += 1
 
         if state.record_flag:
-            self.save_record(state=state)
+            self.save_record(state=state, metric_value=metric_value)
             self.reset()
 
