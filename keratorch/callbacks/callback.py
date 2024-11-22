@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from .state import State
+from ..state import State
 
 __all__ = ["CallBack", "CallBackList"]
 

@@ -3,8 +3,8 @@ import torch as tr
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from .history import History
-    from ..utils.iters import TqdmIterator
+    from .callbacks.history import History
+    from .utils.iters import TqdmIterator
 
 
 __all__ = ["State", ]

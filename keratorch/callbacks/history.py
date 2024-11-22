@@ -2,7 +2,7 @@ from typing import Dict, Any, List
 from collections import defaultdict
 
 from .callback import CallBack
-from .state import State
+from ..state import State
 
 __all__ = ["History", ]
 
