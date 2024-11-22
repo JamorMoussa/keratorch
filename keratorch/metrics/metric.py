@@ -12,7 +12,7 @@ class Metric(CallBack, ABC):
         self.reset()
     
     @abstractmethod
-    def compute_value(self, state) -> float:
+    def compute_value(self, state: State) -> float:
         ...
 
     def save_record(self, state: State, metric_value: float):
@@ -28,6 +28,10 @@ class Metric(CallBack, ABC):
     def on_batch_end(self, state: State):
 
         metric_value = self.compute_value(state=state)
+
+        if state.record_flag:
+            metric_value /=  self.counter
+            
         self.counter += 1
 
         if state.record_flag:

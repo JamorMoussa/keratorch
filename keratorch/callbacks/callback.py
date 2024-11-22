@@ -64,11 +64,11 @@ class CallBackList(CallBack):
 
     def update_recordflag(self):
 
-        total = self.state.hyprams.loadersize * self.state.hyprams.num_iters
+        total = self.state.hyparams.loadersize * self.state.hyparams.num_iters
         
-        p = int(total / self.state.hyprams.verbose_iter)
+        p = int(total / self.state.hyparams.verbose_iter)
 
-        iter_ = self.state.hyprams.iter + self.state.hyprams.epoch * self.state.hyprams.loadersize 
+        iter_ = self.state.hyparams.iter + self.state.hyparams.epoch * self.state.hyparams.loadersize 
 
         if (iter_ % p == 0) and (iter_ != 0):
             self.state.record_flag = True 

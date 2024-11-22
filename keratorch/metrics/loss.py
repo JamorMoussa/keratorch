@@ -18,8 +18,5 @@ class Loss(Metric):
         self, state: State
     ):
         self.metric_value += state.loss
-        
-        if state.record_flag:
-            self.metric_value /= self.counter
 
         return self.metric_value

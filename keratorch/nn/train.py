@@ -40,7 +40,6 @@ class ktTrainer(nn.Module, ABC):
 
     def initiate_states(self):
         self.state.set_model(model=self)
-        self.state.set_optimizer(optimizer=self.optimizer)
         self.state.set_history(history=self.history)
         self.state.set_tqdm_iter(tqdm_iter=self.tqdm_iter)
 
@@ -72,6 +71,7 @@ class ktTrainer(nn.Module, ABC):
     def compile_optimizer_lossfn(self, optimizer: Optimizer, loss_fn: "_Loss"):
         self.optimizer = optimizer
         self.optimizer.set_params(params=self.parameters())
+        self.state.set_optimizer(optimizer=self.optimizer)
 
         self.loss_fn = loss_fn
     
@@ -86,16 +86,16 @@ class ktTrainer(nn.Module, ABC):
     def update_state_params_before_training(
         self, num_iters: int, loadersize: int, num_records: int
     ):
-        self.state.hyprams.set_numiters(num_iters=num_iters)
-        self.state.hyprams.set_loadersize(loadersize=loadersize)
-        self.state.hyprams.set_verbose_iter(verbose_iter=num_records)
+        self.state.hyparams.set_numiters(num_iters=num_iters)
+        self.state.hyparams.set_loadersize(loadersize=loadersize)
+        self.state.hyparams.set_verbose_iter(verbose_iter=num_records)
 
 
     def update_state_params_after_iter(
         self, epoch: int, itr: int 
     ):
-        self.state.hyprams.set_epoch(epoch=epoch)
-        self.state.hyprams.set_iter(iter=itr)
+        self.state.hyparams.set_epoch(epoch=epoch)
+        self.state.hyparams.set_iter(iter=itr)
 
 
     def compute_forward(
@@ -107,7 +107,7 @@ class ktTrainer(nn.Module, ABC):
         targets = batch[1].to(self.device)
 
         outputs = self.forward(inputs)
-        self.state.set_outputs(outputs=outputs)
+        self.state.set_outputs(outputs=outputs.detach())
 
         return outputs, targets
 
@@ -127,6 +127,10 @@ class ktTrainer(nn.Module, ABC):
         loss.backward()
         self.optimizer.step()
 
+
+    @abstractmethod
+    def forward(self, *args, **kwargs) -> tr.Tensor:
+        ... 
 
     @abstractmethod
     def fit(self, *args, **kwargs):

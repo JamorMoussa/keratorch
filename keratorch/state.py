@@ -45,7 +45,7 @@ class State:
     tqdm_iter: "TqdmIterator" = None 
     record_flag: bool = False
 
-    hyprams: HyparamState = HyparamState()
+    hyparams: HyparamState = HyparamState()
 
     def set_model(self, model: tr.nn.Module):
         self.model = model
