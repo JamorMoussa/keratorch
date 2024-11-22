@@ -16,8 +16,6 @@ class History(CallBack):
 
     def on_batch_end(self, state: State = None):
         state.tqdm_iter.metrics["Epoch"] = f"[{state.hyprams.epoch}/{state.hyprams.num_iters}]"
-        for key, value in state.logs.items():
-            self.history[key].append(value)
     
     # def on_epoch_end(self, state: State):
     #     pass 

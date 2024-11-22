@@ -1,6 +1,9 @@
-from typing import Dict, Any
+from typing import TYPE_CHECKING
 
 from ..state import State
+
+if TYPE_CHECKING:
+    from .history import History
 
 __all__ = ["CallBack", "CallBackList"]
 
@@ -25,11 +28,14 @@ class CallBack:
 
 class CallBackList(CallBack):
 
-    def __init__(self, state: State = None ):
+    def __init__(self, state: State, history: "History"):
         super(CallBackList, self).__init__()
 
         self.callbacks: list[CallBack] = []
         self.state: State = state
+        self.history = history
+
+        self.callbacks.append(self.history)
 
     def append(self, *callback: tuple[CallBack]):
         for call_back in callback: 

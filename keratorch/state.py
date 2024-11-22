@@ -43,7 +43,6 @@ class State:
     outputs: tr.Tensor = None
     history: "History" = None 
     tqdm_iter: "TqdmIterator" = None 
-    logs: dict[Any] = {}
     record_flag: bool = False
 
     hyprams: HyparamState = HyparamState()
@@ -68,6 +67,3 @@ class State:
 
     def set_tqdm_iter(self, tqdm_iter: "TqdmIterator"):
         self.tqdm_iter = tqdm_iter
-
-    def set_logs(self, logs: dict[Any]):
-        self.logs = logs
