@@ -1,11 +1,9 @@
 import torch as tr, torch.nn as nn
 from torch.utils.data import DataLoader
 
-from tqdm import tqdm
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable
-from collections import defaultdict
+from typing import TYPE_CHECKING
 
 from ..optim import Optimizer
 from ..callbacks import CallBackList, CallBack , State, History
@@ -119,13 +117,3 @@ class ktModule(nn.Module, ABC):
         raise NotImplementedError
 
 
-class Lambda(nn.Module):
-
-    def __init__(
-        self, transform_func: Callable
-    ):
-        super(Lambda, self).__init__()
-        self.transform_func = transform_func
-
-    def forward(self, inputs: tr.Tensor):
-        return self.transform_func(inputs)
