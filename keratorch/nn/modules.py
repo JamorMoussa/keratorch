@@ -34,9 +34,7 @@ class ktModule(ktTrainer, ABC):
 
             for itr, batch in self.tqdm_iter.get_tqdm(loader=trainloader, enum=True):
                 
-                self.update_state_params_after_iter(
-                    epoch=epoch, itr=itr, batch=batch
-                )
+                self.update_state_params_after_iter(epoch=epoch, itr=itr)
 
                 self.callbacklist.on_batch_begin()
 
