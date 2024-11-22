@@ -34,3 +34,9 @@ class SGD(Optimizer, optim.SGD):
 
     def super_init(self):
         optim.SGD.__init__(self, self.params, *self.args, **self.kwargs)
+
+
+class Adagrad(Optimizer, optim.Adagrad):
+
+    def super_init(self):
+        optim.Adagrad.__init__(self, self.params, *self.args, **self.kwargs)

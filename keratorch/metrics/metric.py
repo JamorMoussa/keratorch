@@ -28,13 +28,10 @@ class Metric(CallBack, ABC):
     def on_batch_end(self, state: State):
 
         metric_value = self.compute_value(state=state)
-
-        if state.record_flag:
-            metric_value /=  self.counter
-            
         self.counter += 1
 
         if state.record_flag:
+            metric_value /=  self.counter
             self.save_record(state=state, metric_value=metric_value)
             self.reset()
 

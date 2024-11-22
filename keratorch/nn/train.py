@@ -98,7 +98,7 @@ class ktTrainer(nn.Module, ABC):
         self.state.hyparams.set_iter(iter=itr)
 
 
-    def compute_forward(
+    def do_forward_pass(
         self, batch: tuple[tr.Tensor]
     ):
         self.state.set_batch(batch=batch)
@@ -120,7 +120,7 @@ class ktTrainer(nn.Module, ABC):
 
         return loss
     
-    def do_backward_optimizer_step(
+    def do_backward_pass(
         self, loss: tr.Tensor
     ):        
         self.optimizer.zero_grad()

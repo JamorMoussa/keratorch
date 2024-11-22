@@ -38,13 +38,13 @@ class ktModule(ktTrainer, ABC):
 
                 self.callbacklist.on_batch_begin()
 
-                outputs, targets = self.compute_forward(batch=batch)
+                outputs, targets = self.do_forward_pass(batch=batch)
                 
                 loss = self.compute_loss(
                     outputs=outputs, targets=targets
                 )
                 
-                self.do_backward_optimizer_step(loss=loss)
+                self.do_backward_pass(loss=loss)
 
                 self.callbacklist.on_batch_end()
 
