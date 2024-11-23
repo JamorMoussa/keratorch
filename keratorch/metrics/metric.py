@@ -9,7 +9,9 @@ class Metric(CallBack, ABC):
     def __init__(self, name: str):
         super(Metric, self).__init__()  
         self.name: str = name 
-        self.reset()
+
+        self.metric_value = 0
+        self.counter = 1
     
     @abstractmethod
     def compute_value(self, state: State) -> float:

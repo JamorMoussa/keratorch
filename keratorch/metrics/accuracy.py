@@ -11,10 +11,9 @@ class Accuracy(Metric):
 
     def compute_value(self, state: State):
 
-        if state.record_flag:
-            self.metric_value /= state.hyparams.loadersize
-
         self.metric_value += (
             state.outputs.cpu().argmax(dim=-1) == state.batch[1]
         ).sum().item()
+
+        return self.metric_value
  

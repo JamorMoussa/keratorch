@@ -8,11 +8,10 @@ __all__ = ["Loss", ]
 
 class Loss(Metric):
 
-    loss: float 
-    counter: int = 1  
-
     def __init__(self, name: str ="loss"):
         super(Loss, self).__init__(name=name)
+
+        self.counter: int = 1  
 
     def compute_value(
         self, state: State
