@@ -44,6 +44,7 @@ class CallBackList(CallBack):
     def clear(self):
         self.callbacks.clear()
         self.history.clear()
+        self.state.tqdm_iter.clear()
         self.callbacks.append(self.history)
 
     def on_train_begin(self):

@@ -31,3 +31,6 @@ class TqdmIterator:
         self.desc = " - ".join([f"{key}: {val}" for key, val in self._metrics.items()])
         self.tqdm_iter.set_description(self.desc)
 
+    def clear(self):
+        self._metrics.clear()
+
