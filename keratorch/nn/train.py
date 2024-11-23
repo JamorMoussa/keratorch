@@ -57,6 +57,7 @@ class ktTrainer(nn.Module, ABC):
         metrics: list[Metric] = [],
         callbacks: list[CallBack] = [],
     ):
+        self.callbacklist.clear()
 
         self.compile_optimizer_lossfn(
             optimizer=optimizer, loss_fn=loss_fn
@@ -66,6 +67,8 @@ class ktTrainer(nn.Module, ABC):
 
         self.callbacklist.append(*metrics)
         self.callbacklist.append(*callbacks)
+
+        self.initiate_states()
 
 
     def compile_optimizer_lossfn(self, optimizer: Optimizer, loss_fn: "_Loss"):

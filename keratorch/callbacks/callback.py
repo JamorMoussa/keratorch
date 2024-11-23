@@ -41,6 +41,11 @@ class CallBackList(CallBack):
         for call_back in callback: 
             self.callbacks.append(call_back)
 
+    def clear(self):
+        self.callbacks.clear()
+        self.history.clear()
+        self.callbacks.append(self.history)
+
     def on_train_begin(self):
         for callback in self.callbacks:
             callback.on_batch_begin(state=self.state)
