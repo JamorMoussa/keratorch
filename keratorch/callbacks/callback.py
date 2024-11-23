@@ -49,7 +49,7 @@ class CallBackList(CallBack):
 
     def on_train_begin(self):
         for callback in self.callbacks:
-            callback.on_batch_begin(state=self.state)
+            callback.on_train_begin(state=self.state)
 
     def on_epoch_begin(self):
         for callback in self.callbacks:
