@@ -72,7 +72,7 @@ class CallBackList(CallBack):
 
         total = self.state.hyparams.loadersize * self.state.hyparams.num_iters
         
-        p = int(total / self.state.hyparams.verbose_iter)
+        p = int(total / self.state.hyparams.num_records)
 
         iter_ = self.state.hyparams.iter + self.state.hyparams.epoch * self.state.hyparams.loadersize 
 

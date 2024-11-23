@@ -23,7 +23,7 @@ class ktModule(ktTrainer, ABC):
     ):
         
         self.update_state_params_before_training(
-            num_iters=num_iters, loadersize=len(trainloader), num_records=num_records
+            num_iters=num_iters, loadersize=len(trainloader), num_records=num_records, batch_size=trainloader.batch_size
         )
         
         self.callbacklist.on_train_begin()

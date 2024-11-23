@@ -15,5 +15,8 @@ class Accuracy(Metric):
             state.outputs.cpu().argmax(dim=-1) == state.batch[1]
         ).sum().item()
 
+        if state.record_flag:
+          self.metric_value /= state.hyparams.bacth_size
+
         return self.metric_value
  
