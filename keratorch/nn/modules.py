@@ -32,7 +32,7 @@ class ktModule(ktTrainer, ABC):
             
             self.callbacklist.on_epoch_begin()
 
-            for itr, batch in self.tqdm_iter.get_tqdm(loader=trainloader, enum=True):
+            for itr, batch in self.tqdm_iter.get_tqdm(loader=trainloader, as_enumerate=True):
                 
                 self.update_state_params_after_iter(epoch=epoch, itr=itr)
 

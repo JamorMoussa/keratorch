@@ -21,11 +21,11 @@ class TqdmIterator:
         self.update()
 
 
-    def get_tqdm(self, loader: "DataLoader", enum=False):
+    def get_tqdm(self, loader: "DataLoader", as_enumerate=False):
         self.loader = loader
         self.tqdm_iter = tqdm(iterable=loader)
 
-        return enumerate(self.tqdm_iter) if enum else self.tqdm_iter
+        return enumerate(self.tqdm_iter) if as_enumerate else self.tqdm_iter
 
     def update(self):
         self.desc = " - ".join([f"{key}: {val}" for key, val in self._metrics.items()])
