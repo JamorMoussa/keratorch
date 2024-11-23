@@ -10,19 +10,19 @@ __all__ = ["CallBack", "CallBackList"]
 
 class CallBack:
 
-    def on_train_begin(self):
+    def on_train_begin(self, state: State):
         pass
 
-    def on_epoch_begin(self, state: State = None):
+    def on_epoch_begin(self, state: State):
         pass 
 
-    def on_batch_begin(self, state: State = None):
+    def on_batch_begin(self, state: State):
         pass 
 
-    def on_batch_end(self, state: State = None):
+    def on_batch_end(self, state: State):
         pass 
 
-    def on_epoch_end(self, state: State = None):
+    def on_epoch_end(self, state: State):
         pass 
 
 
