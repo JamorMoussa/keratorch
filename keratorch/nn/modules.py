@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 
 from .train import ktTrainer
 
+import torch
+
 if TYPE_CHECKING:
     from torch.utils.data import DataLoader
 
@@ -53,8 +55,32 @@ class ktModule(ktTrainer, ABC):
 
         return self.history
 
-    def evaluate(self):
-        raise NotImplementedError
+    def evaluate(
+        self, testloader: "DataLoader"
+    ):
+        # TODO: This just a vanilla implimentation, shouldn't hard code the eval_loss #2
+        # Thihs sould follow the fit design.   
+        
+        self.eval()
+
+        eval_loss = 0
+
+        with torch.no_grad():
+            
+            for itr, batch in self.tqdm_iter.get_tqdm(loader=testloader, as_enumerate=True):
+
+                outputs, targets = self.do_forward_pass(batch=batch)
+
+                loss = self.compute_loss(
+                    outputs=outputs, targets=targets
+                )
+
+                eval_loss += loss.item() / len(batch[0])
+
+        eval_loss /= len(testloader)
+        
+        return eval_loss
+
 
     def save(self):
         raise NotImplementedError
