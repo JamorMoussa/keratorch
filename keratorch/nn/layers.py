@@ -1,4 +1,4 @@
-import torch as tr, torch.nn as nn
+import torch, torch.nn as nn
 
 from typing import Callable
 
@@ -14,5 +14,5 @@ class Lambda(nn.Module):
         super(Lambda, self).__init__()
         self.transform_func = transform_func
 
-    def forward(self, inputs: tr.Tensor):
+    def forward(self, inputs: torch.Tensor):
         return self.transform_func(inputs)

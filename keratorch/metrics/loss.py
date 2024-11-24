@@ -1,6 +1,3 @@
-from typing import Dict, Any, List
-from collections import defaultdict
-
 from .metric import Metric
 from ..state import State
 
@@ -14,5 +11,5 @@ class Loss(Metric):
         self.counter: int = 1  
 
     def compute_metric(self, state: State):
-        
+
         self.metric_value += state.loss

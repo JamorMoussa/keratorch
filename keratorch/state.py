@@ -1,4 +1,4 @@
-import torch as tr
+import torch
 
 from typing import TYPE_CHECKING, Any
 
@@ -40,30 +40,30 @@ class HyparamState:
 
 class State:
 
-    model: tr.nn.Module = None 
-    optimizer: "tr.optim.optimizer.Optimizer" = None 
+    model: torch.nn.Module = None 
+    optimizer: "torch.optim.optimizer.Optimizer" = None 
     loss: float
-    batch: tuple[tr.Tensor] = None 
-    outputs: tr.Tensor = None
+    batch: tuple[torch.Tensor] = None 
+    outputs: torch.Tensor = None
     history: "History" = None 
     tqdm_iter: "TqdmIterator" = None 
     record_flag: bool = False
 
     hyparams: HyparamState = HyparamState()
 
-    def set_model(self, model: tr.nn.Module):
+    def set_model(self, model: torch.nn.Module):
         self.model = model
 
-    def set_optimizer(self, optimizer: "tr.optim.optimizer.Optimizer"):
+    def set_optimizer(self, optimizer: "torch.optim.optimizer.Optimizer"):
         self.optimizer = optimizer
 
     def set_loss(self, loss: float):
         self.loss = loss
 
-    def set_batch(self, batch: tuple[tr.Tensor]):
+    def set_batch(self, batch: tuple[torch.Tensor]):
         self.batch = batch
 
-    def set_outputs(self, outputs: tr.Tensor):
+    def set_outputs(self, outputs: torch.Tensor):
         self.outputs = outputs
 
     def set_history(self, history: "History"):

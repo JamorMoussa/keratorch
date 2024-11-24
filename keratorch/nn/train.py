@@ -6,7 +6,7 @@ from ..metrics import Metric
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-import torch as tr, torch.nn as nn
+import torch, torch.nn as nn
 
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ class ktTrainer(nn.Module, ABC):
 
         self.loss_fn: "_Loss" = None 
         self.optimizer: "Optimizer" = None 
-        self.device: tr.device = None
+        self.device: torch.device = None
 
         self.initiate_states()
 
@@ -53,7 +53,7 @@ class ktTrainer(nn.Module, ABC):
         loss_fn: "_Loss",
         optimizer: Optimizer,
         *,
-        device: tr.device = None,
+        device: torch.device = None,
         metrics: list[Metric] = [],
         callbacks: list[CallBack] = [],
     ):
@@ -80,9 +80,9 @@ class ktTrainer(nn.Module, ABC):
     
 
     def send_model_to(
-        self, device: tr.device
+        self, device: torch.device
     ):
-        self.device = device if device is not None else tr.device("cpu")
+        self.device = device if device is not None else torch.device("cpu")
         self.to(self.device)
 
 
@@ -103,7 +103,7 @@ class ktTrainer(nn.Module, ABC):
 
 
     def do_forward_pass(
-        self, batch: tuple[tr.Tensor]
+        self, batch: tuple[torch.Tensor]
     ):
         self.state.set_batch(batch=batch)
 
@@ -117,15 +117,15 @@ class ktTrainer(nn.Module, ABC):
 
 
     def compute_loss(
-        self, outputs: tr.Tensor, targets: tr.Tensor
+        self, outputs: torch.Tensor, targets: torch.Tensor
     ):
-        loss: tr.Tensor = self.loss_fn(input=outputs, target=targets)
+        loss: torch.Tensor = self.loss_fn(input=outputs, target=targets)
         self.state.set_loss(loss=loss.item())
 
         return loss
     
     def do_backward_pass(
-        self, loss: tr.Tensor
+        self, loss: torch.Tensor
     ):        
         self.optimizer.zero_grad()
         loss.backward()
@@ -133,7 +133,7 @@ class ktTrainer(nn.Module, ABC):
 
 
     @abstractmethod
-    def forward(self, *args, **kwargs) -> tr.Tensor:
+    def forward(self, *args, **kwargs) -> torch.Tensor:
         ... 
 
     @abstractmethod
