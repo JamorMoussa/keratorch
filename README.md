@@ -68,7 +68,7 @@ You can make a custom metric:
 ```python
 class PersonMetric(kt.metrics.Metric):
 
-    def compute_value(self, state):
+    def compute_metric(self, state: kt.state.State):
         
         outs = state.outputs.flatten()
         targets = state.batch[1].flatten()
@@ -77,7 +77,6 @@ class PersonMetric(kt.metrics.Metric):
         targets_ = targets - targets.mean()
         self.metric_value += (outs_ * targets_).sum().item() / ((outs_**2).sum().sqrt() * (targets_**2).sum().sqrt()).item()
 
-        return self.metric_value
 ```
 
 ### Model Compilation

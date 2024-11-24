@@ -24,11 +24,22 @@ class Model(kt.nn.ktModule):
 
 model = Model()
 
+class PersonMetric(kt.metrics.Metric):
+
+    def compute_metric(self, state: kt.state.State):
+        
+        outs = state.outputs.flatten()
+        targets = state.batch[1].flatten()
+
+        outs_ = outs - outs.mean()
+        targets_ = targets - targets.mean()
+        self.metric_value += (outs_ * targets_).sum().item() / ((outs_**2).sum().sqrt() * (targets_**2).sum().sqrt()).item()
+
 
 class LogEpoch(kt.callbacks.CallBack):
 
     def on_epoch_end(self, state = None):
-        print("#"*30, state.hyprams.epoch, "#"*30)
+        print("#"*30, state.hyparams.epoch, "#"*30)
 
 model.compile(
     loss_fn= nn.MSELoss(),
@@ -36,6 +47,7 @@ model.compile(
     metrics= [
         kt.metrics.Loss(name="train loss"),
         # kt.metrics.Accuracy()
+        PersonMetric(name="person")
     ],
     callbacks= [ LogEpoch(), ]
 )
@@ -44,7 +56,7 @@ x = tr.rand(10000, 7)
 
 y = tr.mm(
     x, tr.rand(1, 7).t()
-) + 0.5* tr.randn(10000, 7)
+) + 0.2 * tr.randn(10000, 1)
 
 print(y.shape)
 
@@ -52,7 +64,7 @@ dataset = TensorDataset(x, y)
 
 loader = DataLoader(dataset, batch_size=32)
 
-hist = model.fit(trainloader= loader, num_iters=5, num_records=40)
+hist = model.fit(trainloader= loader, num_iters=10, num_records=40)
 
 print(hist.history.keys())
 
