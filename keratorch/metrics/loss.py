@@ -13,9 +13,6 @@ class Loss(Metric):
 
         self.counter: int = 1  
 
-    def compute_value(
-        self, state: State
-    ):
+    def compute_metric(self, state: State):
+        
         self.metric_value += state.loss
-
-        return self.metric_value

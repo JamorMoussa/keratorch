@@ -21,6 +21,7 @@ class ktModule(ktTrainer, ABC):
     def fit(
         self, trainloader: "DataLoader", num_iters: int, num_records: int = None
     ):
+        self.train()
         
         self.update_state_params_before_training(
             num_iters=num_iters, loadersize=len(trainloader), num_records=num_records, batch_size=trainloader.batch_size
