@@ -12,7 +12,7 @@ class Accuracy(Metric):
     def compute_metric(self, state: State):
 
         self.metric_value += (
-            state.outputs.cpu().argmax(dim=-1) == state.batch[1]
+            state.train.outputs.cpu().argmax(dim=-1) == state.train.batch[1]
         ).sum().item()
 
         if state.record_flag:

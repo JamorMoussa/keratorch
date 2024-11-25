@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .callbacks.history import History
     from .utils.iters import TqdmIterator
+    from torch.optim.optimizer import Optimizer
 
 
 __all__ = ["State", ]
@@ -38,24 +39,18 @@ class HyparamState:
         self.bacth_size = batch_size
 
 
-class State:
+class ValidationState:
+    pass
 
-    model: torch.nn.Module = None 
-    optimizer: "torch.optim.optimizer.Optimizer" = None 
-    loss: float
-    batch: tuple[torch.Tensor] = None 
-    outputs: torch.Tensor = None
-    history: "History" = None 
-    tqdm_iter: "TqdmIterator" = None 
-    record_flag: bool = False
 
-    hyparams: HyparamState = HyparamState()
+class TrainingState:
 
-    def set_model(self, model: torch.nn.Module):
-        self.model = model
-
-    def set_optimizer(self, optimizer: "torch.optim.optimizer.Optimizer"):
-        self.optimizer = optimizer
+    def __init__(self):
+        
+        self.loss: float = None 
+        self.batch: tuple[torch.Tensor] = None
+        self.outputs: torch.Tensor = None 
+        self.optimizer: "Optimizer" = None 
 
     def set_loss(self, loss: float):
         self.loss = loss
@@ -65,6 +60,28 @@ class State:
 
     def set_outputs(self, outputs: torch.Tensor):
         self.outputs = outputs
+
+    def set_optimizer(self, optimizer: "Optimizer"):
+        self.optimizer = optimizer
+
+
+class State:
+
+    def __init__(
+        self
+    ):        
+        self.model: torch.nn.Module = None 
+
+        self.history: "History" = None 
+        self.tqdm_iter: "TqdmIterator" = None 
+        self.record_flag: bool = False
+
+        self.hyparams = HyparamState()
+        self.train = TrainingState()
+        self.val = ValidationState() 
+
+    def set_model(self, model: torch.nn.Module):
+        self.model = model
 
     def set_history(self, history: "History"):
         self.history = history

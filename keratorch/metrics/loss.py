@@ -12,4 +12,4 @@ class Loss(Metric):
 
     def compute_metric(self, state: State):
 
-        self.metric_value += state.loss
+        self.metric_value += state.train.loss

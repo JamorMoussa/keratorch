@@ -74,7 +74,7 @@ class ktTrainer(nn.Module, ABC):
     def compile_optimizer_lossfn(self, optimizer: Optimizer, loss_fn: "_Loss"):
         self.optimizer = optimizer
         self.optimizer.set_params(params=self.parameters())
-        self.state.set_optimizer(optimizer=self.optimizer)
+        self.state.train.set_optimizer(optimizer=self.optimizer)
 
         self.loss_fn = loss_fn
     
@@ -105,13 +105,13 @@ class ktTrainer(nn.Module, ABC):
     def do_forward_pass(
         self, batch: tuple[torch.Tensor]
     ):
-        self.state.set_batch(batch=batch)
+        self.state.train.set_batch(batch=batch)
 
         inputs = batch[0].to(self.device)
         targets = batch[1].to(self.device)
 
         outputs = self.forward(inputs)
-        self.state.set_outputs(outputs=outputs.detach())
+        self.state.train.set_outputs(outputs=outputs.detach())
 
         return outputs, targets
 
@@ -120,7 +120,7 @@ class ktTrainer(nn.Module, ABC):
         self, outputs: torch.Tensor, targets: torch.Tensor
     ):
         loss: torch.Tensor = self.loss_fn(input=outputs, target=targets)
-        self.state.set_loss(loss=loss.item())
+        self.state.train.set_loss(loss=loss.item())
 
         return loss
     
