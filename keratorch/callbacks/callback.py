@@ -56,7 +56,7 @@ class CallBackList(CallBack):
             callback.on_epoch_begin(state=self.state)
 
     def on_batch_begin(self):
-        self.update_recordflag()
+        self.update_recordsflags()
         for callback in self.callbacks:
             callback.on_batch_begin(state=self.state)
 
@@ -68,15 +68,22 @@ class CallBackList(CallBack):
         for callback in self.callbacks:
             callback.on_epoch_end(state=self.state)
 
-    def update_recordflag(self):
+    def update_recordsflags(self):
 
         total = self.state.hyparams.loadersize * self.state.hyparams.num_iters
         
-        p = int(total / self.state.hyparams.num_records)
+        p_train = int(total / self.state.hyparams.num_records)
+
+        p_val = int(total / self.state.val.val_records)
 
         iter_ = self.state.hyparams.iter + self.state.hyparams.epoch * self.state.hyparams.loadersize 
 
-        if (iter_ % p == 0) and (iter_ != 0):
+        if (iter_ % p_train == 0) and (iter_ != 0):
             self.state.record_flag = True 
         else: 
             self.state.record_flag = False
+
+        if (iter_ % p_val == 0) and (iter_ != 0):
+            self.state.val.records_flag = True 
+        else:
+            self.state.val.records_flag = False 

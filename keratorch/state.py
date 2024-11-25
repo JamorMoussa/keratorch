@@ -63,9 +63,14 @@ class ValidationState(BaseTVState):
 
         self.do_validation: bool = False
         self.targets: torch.Tensor = None 
+        self.val_records: int = 10
+        self.records_flag: bool = False
 
     def set_targets(self, targets: torch.Tensor):
         self.targets = targets
+
+    def set_valrecords(self, val_records: int):
+        self.val_records = val_records
 
 
 class TrainingState(BaseTVState):

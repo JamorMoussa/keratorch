@@ -17,6 +17,10 @@ class History(CallBack):
     def on_train_begin(self, state: State):
         self.history.clear()
 
-    def on_batch_end(self, state: State = None):
-        state.tqdm_iter._metrics["Epoch"] = f"[{state.hyparams.epoch}/{state.hyparams.num_iters}]"
+    def on_train_begin(self, state):
+        print(f"\nEpoch: [{state.hyparams.epoch}/{state.hyparams.num_iters}]")
+
+    def on_epoch_end(self, state: State = None):
+        print(f"\nEpoch: [{state.hyparams.epoch}/{state.hyparams.num_iters}]")
+        # state.tqdm_iter._metrics["Epoch"] = f"[{state.hyparams.epoch}/{state.hyparams.num_iters}]"
     

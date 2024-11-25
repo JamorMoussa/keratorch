@@ -39,14 +39,14 @@ class Metric(CallBack, ABC):
         self.compute_train_metric(state=state)
         self.counter += 1
 
-        if state.record_flag:
+        if state.val.do_validation and state.val.records_flag:
+            train_value = self.train_value / self.counter
+            self.compute_val_metric(state=state)
+            self.save_record(state=state, name="val_" + self.name, metric_value=self.val_value)
+            self.save_record(state=state, name="train_" + self.name, metric_value=train_value)
 
+        if state.record_flag:
             self.train_value /=  self.counter
             self.save_record(state=state, name=self.name, metric_value=self.train_value)
-            
-            if state.val.do_validation:
-                self.compute_val_metric(state=state)
-                self.save_record(state=state, name="val_" + self.name, metric_value=self.val_value)
-            
             self.reset()
 

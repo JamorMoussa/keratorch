@@ -152,12 +152,14 @@ class ktTrainer(nn.Module, ABC):
 
 
     def update_state_params_before_training(
-        self, num_iters: int, loadersize: int, num_records: int, batch_size: int
+        self, num_iters: int, loadersize: int, num_records: int, batch_size: int, val_records: int
     ):
         self.state.hyparams.set_numiters(num_iters=num_iters)
         self.state.hyparams.set_loadersize(loadersize=loadersize)
         self.state.hyparams.set_num_records(num_records=num_records)
         self.state.hyparams.set_batch_size(batch_size=batch_size)
+
+        self.state.val.set_valrecords(val_records=val_records)
 
 
     def update_state_params_after_iter(

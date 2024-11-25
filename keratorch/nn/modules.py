@@ -21,12 +21,18 @@ class ktModule(ktTrainer, ABC):
         ...
 
     def fit(
-        self, trainloader: "DataLoader", num_iters: int, num_records: int = None, val_split: float = None
+        self,
+        trainloader: "DataLoader",
+        num_iters: int,
+        num_records: int = None,
+        val_split: float = None,
+        val_records: int = 10,
     ):
         self.train()
         
         self.update_state_params_before_training(
-            num_iters=num_iters, loadersize=len(trainloader), num_records=num_records, batch_size=trainloader.batch_size
+            num_iters=num_iters, loadersize=len(trainloader),
+            num_records=num_records, batch_size=trainloader.batch_size, val_records= val_records,
         )
 
         train_loader, val_loader = self.get_loaders(
@@ -53,7 +59,7 @@ class ktModule(ktTrainer, ABC):
                 
                 self.do_backward_pass(loss=loss)
 
-                if self.state.record_flag and self.state.val.do_validation:
+                if self.state.val.do_validation and self.state.val.records_flag:
                     self.do_validation(
                         val_loader = val_loader
                     )
