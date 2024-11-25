@@ -101,7 +101,7 @@ class ktTrainer(nn.Module, ABC):
 
             return (
                 DataLoader(trainset, batch_size=trainloader.batch_size, shuffle=True),
-                DataLoader(valset, batch_size=trainloader.batch_size, shuffle=False)
+                DataLoader(valset, batch_size=len(val_split), shuffle=False)
             ) 
 
     def do_validation(
