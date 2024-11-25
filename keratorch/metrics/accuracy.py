@@ -29,7 +29,7 @@ class Accuracy(Metric):
 
     def compute_val_metric(self, state):
         self.val_value = self.compute_acc(
-            outputs=state.val.outputs, targets= state.val.batch[1]
+            outputs=state.val.outputs, targets= state.val.targets
         )
 
         self.val_value /= state.val.outputs.size(0)
