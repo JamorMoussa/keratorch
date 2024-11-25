@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import torch, torch.nn as nn
+from torch.utils.data import DataLoader, Subset
 
 
 if TYPE_CHECKING:
@@ -77,7 +78,71 @@ class ktTrainer(nn.Module, ABC):
         self.state.train.set_optimizer(optimizer=self.optimizer)
 
         self.loss_fn = loss_fn
-    
+
+
+    def get_loaders(
+        self, trainloader: DataLoader, val_split: float = None
+    ): 
+        if val_split is None:
+            self.state.val.do_validation = False
+            return trainloader, None
+
+        elif not isinstance(val_split, float) or not ( 0 < val_split < 1):
+            raise ValueError("'val_split' argument must be of 'float' type and 0 < val_split < 1.")
+        
+        else:
+            self.state.val.do_validation = True
+
+            dataset = trainloader.dataset
+            del_index = int((1 - val_split) * len(dataset))
+
+            trainset = Subset(dataset, range(del_index))
+            valset = Subset(dataset, range(del_index, len(dataset)))
+
+            return (
+                DataLoader(trainset, batch_size=trainloader.batch_size, shuffle=True),
+                DataLoader(valset, batch_size=trainloader.batch_size, shuffle=False)
+            ) 
+
+    def do_validation(
+        self, val_loader: DataLoader
+    ):
+        outputs_list = []
+        targets_list = []
+        loss = 0
+        counter = 1
+        self.eval()
+
+        with torch.no_grad():
+            for itr, batch in enumerate(val_loader):
+
+                outputs, targets = self.do_forward_pass(batch=batch)
+
+                loss += self.compute_loss(
+                    outputs=outputs, targets=targets
+                ).item()
+
+                counter += 1
+
+                outputs_list.append(outputs.flatten().view(-1, 1))
+                targets_list.append(targets.flatten().view(-1, 1))
+
+        loss /= counter
+
+        self.state.val.set_targets(
+            targets= torch.cat(targets_list, dim=0)
+        )
+
+        self.state.val.set_outputs(
+            outputs= torch.cat(outputs_list, dim=0)
+        )
+
+        self.state.val.set_loss(
+            loss=loss
+        )
+        
+        self.train()
+
 
     def send_model_to(
         self, device: torch.device

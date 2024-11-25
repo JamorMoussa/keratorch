@@ -56,11 +56,11 @@ class CallBackList(CallBack):
             callback.on_epoch_begin(state=self.state)
 
     def on_batch_begin(self):
+        self.update_recordflag()
         for callback in self.callbacks:
             callback.on_batch_begin(state=self.state)
 
     def on_batch_end(self):
-        self.update_recordflag()
         for callback in self.callbacks: 
             callback.on_batch_end(state=self.state)
 

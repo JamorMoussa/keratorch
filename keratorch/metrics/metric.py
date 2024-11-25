@@ -10,31 +10,43 @@ class Metric(CallBack, ABC):
         super(Metric, self).__init__()  
         self.name: str = name 
 
-        self.metric_value = 0
+        self.train_value = 0
+        self.val_value = 0
         self.counter = 1
     
     @abstractmethod
-    def compute_metric(self, state: State) -> None:
+    def compute_train_metric(self, state: State) -> None:
         ...
 
-    def save_record(self, state: State, metric_value: float):
+    @abstractmethod
+    def compute_val_metric(self, state: State) -> None:
+        ...
+
+    def save_record(self, state: State, name: str, metric_value: float):
 
         state.tqdm_iter.set_metrics(
-            name=self.name, value=metric_value
+            name=name, value=metric_value
         )
-        state.history.history[self.name].append(metric_value)
+        state.history.history[name].append(metric_value)
 
     def reset(self):
-        self.metric_value = 0
+        self.train_value = 0
+        self.val_value = 0
         self.counter = 1
 
     def on_batch_end(self, state: State):
-
-        self.compute_metric(state=state)
+    
+        self.compute_train_metric(state=state)
         self.counter += 1
 
         if state.record_flag:
-            self.metric_value /=  self.counter
-            self.save_record(state=state, metric_value=self.metric_value)
+
+            self.train_value /=  self.counter
+            self.save_record(state=state, name=self.name, metric_value=self.train_value)
+            
+            if state.val.do_validation:
+                self.compute_val_metric(state=state)
+                self.save_record(state=state, name="val_" + self.name, metric_value=self.val_value)
+            
             self.reset()
 

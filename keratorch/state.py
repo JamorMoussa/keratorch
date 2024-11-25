@@ -39,18 +39,12 @@ class HyparamState:
         self.bacth_size = batch_size
 
 
-class ValidationState:
-    pass
-
-
-class TrainingState:
+class BaseTVState:
 
     def __init__(self):
-        
         self.loss: float = None 
         self.batch: tuple[torch.Tensor] = None
         self.outputs: torch.Tensor = None 
-        self.optimizer: "Optimizer" = None 
 
     def set_loss(self, loss: float):
         self.loss = loss
@@ -60,6 +54,26 @@ class TrainingState:
 
     def set_outputs(self, outputs: torch.Tensor):
         self.outputs = outputs
+
+
+class ValidationState(BaseTVState):
+
+    def __init__(self):
+        super(ValidationState, self).__init__()
+
+        self.do_validation: bool = False
+        self.targets: torch.Tensor = None 
+
+    def set_targets(self, targets: torch.Tensor):
+        self.targets = targets
+
+
+class TrainingState(BaseTVState):
+
+    def __init__(self):
+        super(TrainingState, self).__init__()
+        
+        self.optimizer: "Optimizer" = None 
 
     def set_optimizer(self, optimizer: "Optimizer"):
         self.optimizer = optimizer
