@@ -94,14 +94,14 @@ class ktTrainer(nn.Module, ABC):
             self.state.val.do_validation = True
 
             dataset = trainloader.dataset
-            del_index = int((1 - val_split) * len(dataset))
+            split_index = int((1 - val_split) * len(dataset))
 
-            trainset = Subset(dataset, range(del_index))
-            valset = Subset(dataset, range(del_index, len(dataset)))
+            trainset = Subset(dataset, range(split_index))
+            valset = Subset(dataset, range(split_index, len(dataset)))
 
             return (
                 DataLoader(trainset, batch_size=trainloader.batch_size, shuffle=True),
-                DataLoader(valset, batch_size=len(val_split), shuffle=False)
+                DataLoader(valset, batch_size= 2 * trainloader.batch_size, shuffle=False)
             ) 
 
     def do_validation(
