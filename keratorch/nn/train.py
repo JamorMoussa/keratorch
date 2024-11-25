@@ -125,7 +125,7 @@ class ktTrainer(nn.Module, ABC):
                 counter += 1
 
                 outputs_list.append(outputs.flatten().view(-1, 1))
-                targets_list.append(targets.flatten().view(-1, 1))
+                targets_list.append(targets.cpu().flatten().view(-1, 1))
 
         loss /= counter
 
@@ -178,7 +178,7 @@ class ktTrainer(nn.Module, ABC):
         targets = batch[1].to(self.device)
 
         outputs = self.forward(inputs)
-        self.state.train.set_outputs(outputs=outputs.detach())
+        self.state.train.set_outputs(outputs=outputs.detach().cpu())
 
         return outputs, targets
 

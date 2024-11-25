@@ -15,7 +15,7 @@ class Accuracy(Metric):
     def compute_acc(self, outputs: torch.Tensor, targets: torch.Tensor):
 
         return (
-            outputs.cpu().argmax(dim=-1) == targets
+            outputs.argmax(dim=-1) == targets
         ).sum().item()
     
 
