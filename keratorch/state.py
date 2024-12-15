@@ -1,109 +1,51 @@
+from dataclasses import dataclass, field
+
+from .optim import ktOptimizer
+from .nn import ktModule, ktLoss
+from .utils.validations import TypeChecker
+
 import torch
 
-from typing import TYPE_CHECKING, Any
 
-if TYPE_CHECKING:
-    from .callbacks.history import History
-    from .utils.iters import TqdmIterator
-    from torch.optim.optimizer import Optimizer
+@dataclass
+class HyparamState(TypeChecker):
+    epochs: int = 1
 
 
-__all__ = ["State", ]
-
-class HyparamState:
-    iter: int = 0 
-    epoch: int = 0
-    num_records: int = 0
-    loadersize: int = 0
-    num_iters: int = 0
-    bacth_size: int = 0
-
-    def set_epoch(self, epoch: int):
-        self.epoch = epoch 
-
-    def set_iter(self, iter: int):
-        self.iter = iter 
-
-    def set_num_records(self, num_records: int):
-        if num_records is None:
-            num_records = 2 * self.num_iters
-        self.num_records = num_records 
-
-    def set_loadersize(self, loadersize: int):
-        self.loadersize = loadersize
-
-    def set_numiters(self, num_iters: int):
-        self.num_iters = num_iters
-
-    def set_batch_size(self, batch_size: int):
-        self.bacth_size = batch_size
+@dataclass
+class TrainState(TypeChecker):
+    
+    loss: torch.Tensor = field(default_factory= lambda: None)
+    batch: tuple[torch.Tensor] = field(default_factory= lambda: (None, None))
+    outputs: torch.Tensor = field(default_factory= lambda: None)
 
 
-class BaseTVState:
+@dataclass
+class ValidationState(TypeChecker):
+    
+    loss: torch.Tensor = field(default_factory= lambda: None)
+    batch: tuple[torch.Tensor] = field(default_factory= lambda: (None, None))
+    outputs: torch.Tensor = field(default_factory= lambda: None)
 
-    def __init__(self):
-        self.loss: float = None 
-        self.batch: tuple[torch.Tensor] = None
-        self.outputs: torch.Tensor = None 
-
-    def set_loss(self, loss: float):
-        self.loss = loss
-
-    def set_batch(self, batch: tuple[torch.Tensor]):
-        self.batch = batch
-
-    def set_outputs(self, outputs: torch.Tensor):
-        self.outputs = outputs
+    do_validation: bool = False
 
 
-class ValidationState(BaseTVState):
+@dataclass
+class ktState(TypeChecker):
 
-    def __init__(self):
-        super(ValidationState, self).__init__()
+    model: ktModule = field(default_factory= lambda: None)
+    optimizer: ktOptimizer = field(default_factory=lambda: None)
+    loss_fn: ktLoss = field(default_factory=lambda: None)
 
-        self.do_validation: bool = False
-        self.targets: torch.Tensor = None 
-        self.val_records: int = 10
-        self.records_flag: bool = False
+    hyparams: HyparamState = field(default_factory=lambda: None)
+    train: TrainState = field(default_factory=lambda: None)
+    val: ValidationState = field(default_factory=lambda: None)
 
-    def set_targets(self, targets: torch.Tensor):
-        self.targets = targets
-
-    def set_valrecords(self, val_records: int):
-        self.val_records = val_records
-
-
-class TrainingState(BaseTVState):
-
-    def __init__(self):
-        super(TrainingState, self).__init__()
-        
-        self.optimizer: "Optimizer" = None 
-
-    def set_optimizer(self, optimizer: "Optimizer"):
-        self.optimizer = optimizer
+    def __post_init__(self):
+        self.update(
+            hyparams = HyparamState(),
+            train = TrainState(),
+            val = ValidationState()
+        )
 
 
-class State:
-
-    def __init__(
-        self
-    ):        
-        self.model: torch.nn.Module = None 
-
-        self.history: "History" = None 
-        self.tqdm_iter: "TqdmIterator" = None 
-        self.record_flag: bool = False
-
-        self.hyparams = HyparamState()
-        self.train = TrainingState()
-        self.val = ValidationState() 
-
-    def set_model(self, model: torch.nn.Module):
-        self.model = model
-
-    def set_history(self, history: "History"):
-        self.history = history
-
-    def set_tqdm_iter(self, tqdm_iter: "TqdmIterator"):
-        self.tqdm_iter = tqdm_iter

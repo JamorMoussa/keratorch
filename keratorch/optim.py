@@ -2,10 +2,10 @@ from torch import optim
 
 from abc import ABC, abstractmethod
 
-__all__ = ["Adam", "SGD", "Optimizer"]
+__all__ = ["Adam", "SGD", "ktOptimizer"]
 
 
-class Optimizer(ABC):
+class ktOptimizer(ABC):
     
     params: "optim.optimizer.ParamsT" = None
 
@@ -24,19 +24,19 @@ class Optimizer(ABC):
         ... 
 
 
-class Adam(Optimizer, optim.Adam):
+class Adam(ktOptimizer, optim.Adam):
 
     def super_init(self):
         optim.Adam.__init__(self, self.params, *self.args, **self.kwargs)
 
 
-class SGD(Optimizer, optim.SGD):
+class SGD(ktOptimizer, optim.SGD):
 
     def super_init(self):
         optim.SGD.__init__(self, self.params, *self.args, **self.kwargs)
 
 
-class Adagrad(Optimizer, optim.Adagrad):
+class Adagrad(ktOptimizer, optim.Adagrad):
 
     def super_init(self):
         optim.Adagrad.__init__(self, self.params, *self.args, **self.kwargs)
