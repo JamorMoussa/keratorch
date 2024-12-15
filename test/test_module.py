@@ -1,7 +1,7 @@
 import torch, torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
 
-import keratorch as kt
+import keratorch_old as kt
 
 import matplotlib.pyplot as plt
 
