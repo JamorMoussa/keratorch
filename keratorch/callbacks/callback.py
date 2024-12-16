@@ -1,58 +1,66 @@
-import keratorch as kt
+from ..state import ktState
 
-__all__ = ["CallBack", "CallBackList"]
+__all__ = ["CallBack", "_CallBackList", "CallBackList"]
 
 
 class CallBack:
 
-    def on_train_begin(self, state: kt.state.ktState):
+    def on_train_begin(self, state: ktState):
         pass
 
-    def on_epoch_begin(self, state: kt.state.ktState):
+    def on_epoch_begin(self, state: ktState):
         pass 
 
-    def on_batch_begin(self, state: kt.state.ktState):
+    def on_batch_begin(self, state: ktState):
         pass 
 
-    def on_batch_end(self, state: kt.state.ktState):
+    def on_batch_end(self, state: ktState):
         pass 
 
-    def on_epoch_end(self, state: kt.state.ktState):
+    def on_epoch_end(self, state: ktState):
         pass 
 
 
+class _CallBackList(CallBack):
 
-class CallBackList(CallBack):
+    def __init__(self, state: ktState):
 
-    def __init__(self, state: kt.state.ktState):
-        super(CallBackList, self).__init__()
-
-        self.callbacks: list[CallBack] = []
+        self.list: list[CallBack] = []
         self.state = state 
 
     def append(self, *callback: tuple[CallBack]):
         for call_back in callback: 
-            self.callbacks.append(call_back)
+            self.list.append(call_back)
 
     def clear(self):
-        self.callbacks.clear()
+        self.list.clear()
 
     def on_train_begin(self):
-        for callback in self.callbacks:
+        for callback in self.list:
             callback.on_train_begin(state=self.state)
 
     def on_epoch_begin(self):
-        for callback in self.callbacks:
+        for callback in self.list:
             callback.on_epoch_begin(state=self.state)
 
     def on_batch_begin(self):
-        for callback in self.callbacks:
+        for callback in self.list:
             callback.on_batch_begin(state=self.state)
 
     def on_batch_end(self):
-        for callback in self.callbacks: 
+        for callback in self.list: 
             callback.on_batch_end(state=self.state)
 
     def on_epoch_end(self):
-        for callback in self.callbacks:
+        for callback in self.list:
             callback.on_epoch_end(state=self.state)
+
+
+class CallBackList:
+
+    def __init__(self, state: ktState):
+        super(CallBackList, self).__init__()
+
+        self.train = _CallBackList(state=state)
+        # self.eval = _CallBackList(state=state)
+        self.state = state
