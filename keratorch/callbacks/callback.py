@@ -1,29 +1,32 @@
-from ..state import ktState
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..state import ktState
 
 __all__ = ["CallBack", "_CallBackList", "CallBackList"]
 
 
 class CallBack:
 
-    def on_train_begin(self, state: ktState):
+    def on_train_begin(self, state: "ktState"):
         pass
 
-    def on_epoch_begin(self, state: ktState):
+    def on_epoch_begin(self, state: "ktState"):
         pass 
 
-    def on_batch_begin(self, state: ktState):
+    def on_batch_begin(self, state: "ktState"):
         pass 
 
-    def on_batch_end(self, state: ktState):
+    def on_batch_end(self, state: "ktState"):
         pass 
 
-    def on_epoch_end(self, state: ktState):
+    def on_epoch_end(self, state: "ktState"):
         pass 
 
 
 class _CallBackList(CallBack):
 
-    def __init__(self, state: ktState):
+    def __init__(self, state: "ktState"):
 
         self.list: list[CallBack] = []
         self.state = state 
@@ -44,6 +47,7 @@ class _CallBackList(CallBack):
             callback.on_epoch_begin(state=self.state)
 
     def on_batch_begin(self):
+        self.update_recordsflags()
         for callback in self.list:
             callback.on_batch_begin(state=self.state)
 
@@ -56,9 +60,20 @@ class _CallBackList(CallBack):
             callback.on_epoch_end(state=self.state)
 
 
+    def update_recordsflags(self):
+        total = self.state.train.loadersize * self.state.hyparams.epochs
+    
+        p_train = int(total / self.state.hyparams.num_records)
+        iter_ = self.state.hyparams.itr + self.state.hyparams.epoch * self.state.train.loadersize 
+
+        if (iter_ % p_train == 0) and (iter_ != 0):
+            self.state.hyparams.record_flag = True 
+        else: 
+            self.state.hyparams.record_flag = False
+
 class CallBackList:
 
-    def __init__(self, state: ktState):
+    def __init__(self, state: "ktState"):
         super(CallBackList, self).__init__()
 
         self.train = _CallBackList(state=state)

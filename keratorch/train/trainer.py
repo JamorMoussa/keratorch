@@ -45,10 +45,16 @@ class ktTrainer(ABC):
         trainloader: 'DataLoader', 
         epochs: int, 
         *, 
+        num_records: int = 10,
         callbacks: 'List[Callback]'= [] 
     ):
         self.state.model.train()
         self.callbacks.train.on_train_begin()
+
+        self.state.train.update(loadersize= len(trainloader))
+        self.state.hyparams.update(
+            epochs= epochs, num_records= num_records
+        )
 
         for epoch in range(epochs):
             
@@ -67,7 +73,7 @@ class ktTrainer(ABC):
 
                 outs: ModelOutput = self.do_forward_pass(batch= batch)
 
-                self.state.train.update(outputs= outs)
+                self.state.train.update(model_output= outs)
                 self.check_outputs_type(outputs= outs)
 
                 loss = self.compute_loss(outputs= outs.outputs, targets= batch[1])
@@ -79,6 +85,8 @@ class ktTrainer(ABC):
                 self.callbacks.train.on_batch_end()
 
             self.callbacks.train.on_epoch_end()
+
+        return self.state.history 
 
 
     def check_outputs_type(self, outputs: ModelOutput | Any):
