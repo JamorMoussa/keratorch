@@ -1,6 +1,8 @@
 from ..state import ktState
 from ..callbacks import CallBackList
+from ..callbacks.custom import EpochLogger
 from ..outs import ModelOutput
+from ..utils.iters import TqdmIterator
 
 import keratorch as kt
 
@@ -19,6 +21,10 @@ class ktTrainer(ABC):
 
         self.state: ktState = ktState()
         self.callbacks = CallBackList(state=self.state)
+        self.tqdm_iter = TqdmIterator(metrics=self.state.metrics)
+        self.state.update(
+            tqdm_iter= self.tqdm_iter
+        )
 
     def compile(
         self, 
@@ -38,7 +44,8 @@ class ktTrainer(ABC):
             params= self.state.model.parameters()
         )
 
-        self.callbacks.train.append(*callbacks)
+        self.callbacks.train.append(EpochLogger(), *callbacks)
+        self.callbacks.train.append(*metrics, is_merics= True)
 
     def train(
         self, 
@@ -62,7 +69,7 @@ class ktTrainer(ABC):
             
             self.callbacks.train.on_epoch_begin()
 
-            for itr, batch in enumerate(trainloader):
+            for itr, batch in self.tqdm_iter.from_loader(loader=trainloader, as_enumerate=True):
             
                 self.state.hyparams.update(itr= itr)
                 self.state.train.update(batch= batch)
@@ -73,12 +80,12 @@ class ktTrainer(ABC):
 
                 outs: ModelOutput = self.do_forward_pass(batch= batch)
 
-                self.state.train.update(model_output= outs)
-                self.check_outputs_type(outputs= outs)
+                self.state.train.update(model_output=outs)
+                self.check_outputs_type(outputs=outs)
 
-                loss = self.compute_loss(outputs= outs.outputs, targets= batch[1])
+                loss = self.compute_loss(outputs=outs.outputs, targets= batch[1])
 
-                self.do_backward_pass(loss= loss)
+                self.do_backward_pass(loss=loss)
 
                 self.do_optimizer_step()
 
