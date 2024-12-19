@@ -99,10 +99,10 @@ class ktTrainer(ABC):
     
 
     def move_to_device(self, batch: tuple[torch.Tensor]):
-        return (
+        return [
             batch[0].to(self.state.device), 
             batch[1].to(self.state.device), 
-        )
+        ]
 
 
     def check_outputs_type(self, outputs: ModelOutput | Any):
