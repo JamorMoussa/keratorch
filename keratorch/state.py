@@ -3,11 +3,15 @@ from .nn import ktModule, ktLoss
 from .utils.validations import TypeChecker
 from .outs import ModelOutput
 from .callbacks import History
+from .utils.iters import TqdmIterator
 
 import torch
 
 from dataclasses import dataclass, field
-from typing import Any 
+from typing import Any , TYPE_CHECKING
+
+
+
 
 @dataclass
 class HyparamState(TypeChecker):
@@ -18,6 +22,21 @@ class HyparamState(TypeChecker):
 
     num_records: int = 10
     record_flag: bool = False 
+
+
+@dataclass
+class MetricState(TypeChecker):
+
+    metrics: dict = field(default_factory= lambda: {})
+    tqdm_iter: TqdmIterator = field(default_factory= lambda: None)
+
+    def update_metric(self, name: str, value: float):
+        self.metrics[name] = value
+
+        if self.tqdm_iter is not None: self.tqdm_iter.update_metrics()
+
+    def items(self):
+        return self.metrics.items()
 
 
 @dataclass
@@ -55,13 +74,16 @@ class ktState(TypeChecker):
     val: ValidationState = field(default_factory=lambda: None)
 
     history: History = field(default_factory= lambda: None)
+    metrics: MetricState = field(default_factory= lambda: None)
+    tqdm_iter: TqdmIterator = field(default_factory= lambda: None)
 
     def __post_init__(self):
         self.update(
             hyparams = HyparamState(),
             train = TrainState(),
             val = ValidationState(),
-            history = History()
+            history = History(), 
+            metrics = MetricState(),
         )
 
 
