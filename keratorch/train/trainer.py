@@ -70,7 +70,9 @@ class ktTrainer(ABC):
             self.callbacks.train.on_epoch_begin()
 
             for itr, batch in self.tqdm_iter.from_loader(loader=trainloader, as_enumerate=True):
-            
+
+                batch = self.move_to_device(batch= batch)
+
                 self.state.hyparams.update(itr= itr)
                 self.state.train.update(batch= batch)
 
@@ -94,6 +96,13 @@ class ktTrainer(ABC):
             self.callbacks.train.on_epoch_end()
 
         return self.state.history 
+    
+
+    def move_to_device(self, batch: tuple[torch.Tensor]):
+        return (
+            batch[0].to(self.state.device), 
+            batch[1].to(self.state.device), 
+        )
 
 
     def check_outputs_type(self, outputs: ModelOutput | Any):
