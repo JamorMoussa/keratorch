@@ -31,6 +31,9 @@ class Metric(CallBack, ABC):
             state.history.update(
                 name= self.name, value= self.value 
             )
+            state.metrics.update_metric(
+                name= self.name, value= self.value 
+            )
         else:
             self.reset()
 
