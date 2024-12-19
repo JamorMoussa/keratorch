@@ -17,23 +17,31 @@ dataset = TensorDataset(x, y)
 loader = DataLoader(dataset, batch_size=64, shuffle=True)
 
 
-class Model(kt.nn.ktModule):
+# class Model(kt.nn.ktModule):
 
-    def __init__(self):
-        super(Model, self).__init__()
+#     def __init__(self):
+#         super(Model, self).__init__()
 
-        self.fc = nn.Linear(2, 1)
+#         self.fc = nn.Linear(2, 1)
 
-    def forward(self, x):
+#     def forward(self, x):
         
-        return kt.ModelOutput(
-            outputs= self.fc(x),
-        )
+#         return kt.ModelOutput(
+#             outputs= self.fc(x),
+#         )
+    
+# model = Model()
+
+
+model = kt.nn.ktSequential(
+    nn.Linear(2, 1), 
+    kt.nn.ktLambda(lambda x: x), 
+)
     
 trainer = kt.train.ktTrainer()
 
 trainer.compile(
-    model= Model(), 
+    model= model, 
     optimizer= kt.optim.Adam(lr=0.001), 
     loss_fn= nn.MSELoss(), 
     metrics= [
