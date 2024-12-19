@@ -30,48 +30,17 @@ class Model(kt.nn.ktModule):
             outputs= self.fc(x),
         )
     
-
-@torch.no_grad()
-def person(state: kt.state.ktState):
-
-    outs = state.train.model_output.outputs.flatten()
-    targets = state.train.batch[1].flatten()
-
-    outs_ = outs - outs.mean()
-    targets_ = targets - targets.mean()
-    return (outs_ * targets_).sum().item() / ((outs_**2).sum().sqrt() * (targets_**2).sum().sqrt()).item()
-
-
-@torch.no_grad()
-def mse(state: kt.state.ktState):
-
-    return F.mse_loss(
-        state.train.model_output.outputs, state.train.batch[1]
-    )
-
-
-class Log(kt.callbacks.CallBack):
-
-    def on_epoch_begin(self, state):
-        print("#"*10, "Epoch: ", state.hyparams.epoch, "#"*30)
-
-    def on_batch_end(self, state):
-        
-        if state.hyparams.record_flag:
-            print("Loss: ", state.train.loss.item())
-
-
 trainer = kt.train.ktTrainer()
 
 trainer.compile(
     model= Model(), 
     optimizer= kt.optim.Adam(lr=0.001), 
     loss_fn= nn.MSELoss(), 
-    callbacks= [
-        kt.metrics.Metric(name="person", metric_func= person),
-        kt.metrics.Metric(name="mse", metric_func= mse),
-        Log(), 
-    ]
+    metrics= [
+        kt.metrics.mse(),
+        kt.metrics.person()
+    ],
+    callbacks= []
 )
 
 hist = trainer.train(
