@@ -7,7 +7,10 @@ authors = [
     { name = "JamorMoussa", email = "moussajamorsup@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "keras>=3.9.2",
+    "torch>=2.7.0",
+]
 
 [project.scripts]
 keratorch = "keratorch:main"
@@ -15,3 +18,17 @@ keratorch = "keratorch:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu" },
+]
+torchvision = [
+    { index = "pytorch-cpu" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
