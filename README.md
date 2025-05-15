@@ -25,7 +25,7 @@ class UserEmbeddingModel(nn.Module):
         return self.user_embd(user_ids)
 
 
-model = kt.nn.build_from(
+model = kt.nn.build_model_from(
     torch_module= UserEmbeddingModel(),
 )
 

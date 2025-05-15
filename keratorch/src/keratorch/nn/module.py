@@ -4,7 +4,7 @@ from keras.layers import TorchModuleWrapper
 import torch.nn as nn
 
 
-__all__ = ["ktModule", "build_from"]
+__all__ = ["ktModule", "build_model_from"]
 
 
 class ktModule(KerasModel):
@@ -27,7 +27,7 @@ class ktModule(KerasModel):
         return repr(self)
 
 
-def build_from(
+def build_model_from(
     torch_module: nn.Module, 
     input_shape: tuple = None     
 ) -> ktModule: 
