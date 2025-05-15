@@ -1,0 +1,17 @@
+[project]
+name = "keratorch"
+version = "0.1.0"
+description = "Keratorch: A Keras-style high-level API for building and training models in PyTorch."
+readme = "README.md"
+authors = [
+    { name = "JamorMoussa", email = "moussajamorsup@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+keratorch = "keratorch:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
