@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "JamorMoussa", email = "moussajamorsup@gmail.com" }
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = [
     "keras>=3.9.2",
     "torch>=2.7.0",
