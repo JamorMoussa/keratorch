@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./asset/images/logo.png">
+<img src="./asset/images/logo.png" width="500px">
 </p>
 
 # keratorch
