@@ -6,7 +6,7 @@ import torch.nn as nn
 
 __all__ = ["ktModule", "build_model_from"]
 
-
+    
 class ktModule(KerasModel):
 
     def __init__(self, torch_module, **kwargs):
