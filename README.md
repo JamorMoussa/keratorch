@@ -6,6 +6,16 @@
 Keratorch: A Keras-style high-level API for building and training models in PyTorch.
 
 
+## Installation
+
+
+First install `uv`. Then run:
+
+```bash
+uv pip install git+https://github.com/JamorMoussa/keratorch.git # --no-progress: is optional. 
+```
+
+
 ## Example:
 
 ```python
