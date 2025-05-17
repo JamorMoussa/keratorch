@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "keratorch",
+    "torchvision>=0.22.0",
 ]
 
 [tool.uv.sources]

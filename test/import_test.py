@@ -1,51 +1,48 @@
-import torch 
-import torch.nn as nn
+import torch, torch.nn as nn
+import torch.nn.functional as F
+
 import keratorch as kt
 
 
-class UserEmbeddingModel(nn.Module):
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        self.conv2 = nn.Conv2d(32, 64, 3, 1)
+        self.dropout1 = nn.Dropout(0.25)
+        self.dropout2 = nn.Dropout(0.5)
+        self.fc1 = nn.Linear(9216, 128)
+        self.fc2 = nn.Linear(128, 10)
 
-    def __init__(self, num_users: int = 10, embed_dim: int = 8):
-        super().__init__()
-
-        self.user_embd = nn.Embedding(
-            num_embeddings=num_users, embedding_dim= embed_dim
-        )
-
-        self.fc = nn.Linear(embed_dim, 1)
-
-    def forward(self, user_ids: torch.LongTensor):
-        return self.user_embd(user_ids)
-
-
-model = kt.nn.build_model_from(
-    torch_module= UserEmbeddingModel(),
+    def forward(self, x):
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = self.conv2(x)
+        x = F.relu(x)
+        x = F.max_pool2d(x, 2)
+        x = self.dropout1(x)
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.dropout2(x)
+        x = self.fc2(x)
+        output = F.log_softmax(x, dim=1)
+        return output
+    
+dataset = torch.utils.data.TensorDataset(
+    torch.rand(32, 1, 28, 28), torch.randint(0, 9, (32,))
 )
 
-# print(model(
-#     torch.LongTensor([1, 2])
-# ))
+train_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=True)
+test_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False)
 
+model = kt.nn.build_model_from(Net())
 
-print(model.summary())
-
-X = torch.randint(0, 10, (120,))
-
-y = torch.mm(torch.rand(120, 10), torch.rand(10, 1)) - 1
-
-trainloader = torch.utils.data.DataLoader(
-    dataset= torch.utils.data.TensorDataset(X, y), batch_size=32
-)
-
-def torch_style_loss(y_true, y_pred):
-    # y_true, y_pred are torch.Tensors already
-    return torch.mean((y_pred - y_true)**2 + 0.01 * torch.abs(y_pred))
-
+def loss(ypred, y):
+    return F.cross_entropy(y, ypred.long())
 
 model.compile(
-    loss= torch_style_loss,
-    optimizer="adam",
-    metrics=["mse", "mae"]
+    optimizer= torch.optim.Adam(model.torch_module.parameters(), lr=0.1), loss= loss, metrics=["accuracy"]
 )
-model.fit(trainloader, epochs=5)
 
+model.fit(train_loader, epochs=100)

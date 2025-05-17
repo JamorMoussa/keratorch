@@ -1,4 +1,4 @@
-from keras import Model as KerasModel
+from keras import Model
 from keras.layers import TorchModuleWrapper
 
 import torch.nn as nn
@@ -6,8 +6,8 @@ import torch.nn as nn
 
 __all__ = ["ktModule", "build_model_from"]
 
-    
-class ktModule(KerasModel):
+
+class ktModule(Model):
 
     def __init__(self, torch_module, **kwargs):
         super().__init__(**kwargs)
@@ -16,16 +16,6 @@ class ktModule(KerasModel):
 
     def call(self, *args, **kwargs):
         return self.torch_module(*args, **kwargs)
-    
-    def forward(self, *args, **kwargs):
-        return self.call(*args, **kwargs)
-    
-    def __repr__(self):
-        return repr(self.torch_module.module)
-    
-    def __str__(self):
-        return repr(self)
-
 
 def build_model_from(
     torch_module: nn.Module, 
