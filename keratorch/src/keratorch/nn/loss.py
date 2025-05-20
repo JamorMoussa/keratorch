@@ -1,29 +1,42 @@
 import torch, torch.nn as nn
-import torch.nn.functional as F
+from torch.nn.modules.loss import _Loss
 
 from typing import Any
 
 __all__ = [
-    "BaseLoss", "MSELoss", "CrossEntropyLoss"
+    "Loss", "MSELoss", "CrossEntropyLoss"
 ]
 
-class BaseLoss(nn.Module):
+
+class Loss(_Loss):
+
+    _sub_class_loss: bool = True
 
     def __init__(
-        self, torch_loss
+        self,
+        torch_loss: _Loss = None,
+        size_average=None,
+        reduce=None,
+        reduction: str = "mean"
     ):
-        super().__init__()
+        super().__init__(size_average=size_average, reduce=reduce, reduction=reduction)
+
         self.torch_loss = torch_loss
 
-    def forward(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):
         args, kwargs = self._transform_args(*args, **kwargs)
-        return self.torch_loss(*args, **kwargs)
-    
+        if self.torch_loss:
+            return self.torch_loss(*args, **kwargs)
+        
+        return super().__call__(*args, **kwargs)
+
     def _transform_args(self, *args, **kwargs):
-        return args, kwargs 
+        return args, kwargs
 
 
-class MSELoss(BaseLoss):
+class MSELoss(Loss):
+
+    __doc__ == nn.MSELoss.__doc__
 
     def __init__(
         self,
@@ -40,7 +53,9 @@ class MSELoss(BaseLoss):
         )
 
 
-class CrossEntropyLoss(BaseLoss):
+class CrossEntropyLoss(Loss):
+
+    __doc__ == nn.CrossEntropyLoss.__doc__
 
     def __init__(
         self,
@@ -62,8 +77,8 @@ class CrossEntropyLoss(BaseLoss):
             )
         )
 
-    def _transform_args(self, target: torch.Tensor, input: torch.Tensor, *args, **kwargs):
-        
+    def _transform_args(
+        self, target: torch.Tensor, input: torch.Tensor, *args, **kwargs
+    ):
         target = target.flatten().long()
-
         return  (*args,), dict(input=input, target=target, **kwargs)
