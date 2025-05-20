@@ -1,5 +1,5 @@
 from keras import Model
-from keras.src.layers import TorchModuleWrapper
+from keras.src.utils.torch_utils import TorchModuleWrapper
 import torch, torch.nn as nn
 
 
