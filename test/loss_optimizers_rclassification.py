@@ -1,5 +1,4 @@
 import keratorch as kt
-import keratorch.nn as ktnn 
 
 import torch, torch.nn as nn
 from torch.utils.data import Dataset
@@ -44,12 +43,12 @@ dataset = MyDataset(n_rows=1000)
 
 dataloader = kt.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
 
-model = ktnn.build_model_from(
+model = kt.nn.build_model_from(
     torch_module= UserEmbeddingModel()
 )
 
 model.compile(
-    optimizer="adam", loss= ktnn.CrossEntropyLoss(), metrics =["accuracy"]
+    optimizer=kt.optim.Adam(lr=1.2), loss= kt.nn.CrossEntropyLoss(), metrics =["accuracy"]
 )
 
 history = model.fit(dataloader, epochs=3)
