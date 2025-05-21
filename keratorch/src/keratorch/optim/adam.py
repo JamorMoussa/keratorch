@@ -1,8 +1,10 @@
 from keras.src.optimizers import Adam as KerasAdam
 
+from ._base import Optimizer
+
 __all__ = ["Adam",]
 
-class Adam(KerasAdam):
+class Adam(KerasAdam, Optimizer):
 
     def __init__(
         self,

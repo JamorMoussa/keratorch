@@ -3,6 +3,7 @@ from keras.src.utils.torch_utils import TorchModuleWrapper
 import torch, torch.nn as nn
 
 from .loss import ktBaseLoss
+from ..optim import Adam, ktBaseOptimizer
 
 class kerasModel(Model):
     def __init__(self, torch_module: nn.Module):
@@ -23,7 +24,7 @@ class kerasModel(Model):
     
     def compile(
         self, 
-        optimizer="rmsprop",
+        optimizer= Adam(),
         loss=None,
         loss_weights=None,
         metrics=None,
@@ -36,6 +37,10 @@ class kerasModel(Model):
         
         if not isinstance(loss, ktBaseLoss):
             raise ValueError(f"Expect `loss` to be a subclass of `kt.nn.Loss` class, but `{loss.__class__}` is given.")
+
+        if not isinstance(optimizer, ktBaseOptimizer):
+            raise ValueError(f"Expect `optimizer` to be a subclass of `kt.optim.Optimizer` class, but `{optimizer.__class__}` is given.")
+
 
         super().compile(
             optimizer = optimizer,
