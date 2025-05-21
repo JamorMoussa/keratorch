@@ -2,13 +2,18 @@ import torch, torch.nn as nn
 from torch.nn.modules.loss import _Loss
 
 from typing import Any
+from abc import ABC
 
 __all__ = [
     "Loss", "MSELoss", "CrossEntropyLoss"
 ]
 
 
-class Loss(_Loss):
+class ktBaseLoss(ABC):
+    ... 
+
+
+class Loss(_Loss, ktBaseLoss):
 
     _sub_class_loss: bool = True
 
